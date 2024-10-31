@@ -1,0 +1,14 @@
+{
+  "user": "adminMysql",
+  "port": "3306",
+  "password": "[75!-VaxEmONy_sg",
+  "server": "localhost",
+  "database": "user",
+  "options": {
+    "trustedConnection": true,
+    "encrypt": false,
+    "enableArithAbort": true,
+    "trustServerCertificate": true
+  },
+  "HOST" : 5001
+}

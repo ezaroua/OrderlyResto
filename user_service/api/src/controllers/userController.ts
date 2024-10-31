@@ -2,9 +2,10 @@ import {pool} from '../../connectionDb'
 import {UserInterface, rowToUserInterface} from "../models/userModel";
 import {RowDataPacket} from "mysql2/promise";
 import { Request, Response } from "express";
+import {Next} from "mysql2/typings/mysql/lib/parsers/typeCast";
 
 /**Recherche d'un utilisateur*/
-const userGetOne = async (request: Request, response: Response) => {
+const userGetOne = async (request: Request, response: Response, next:Next) => {
     try {
         /**Creer une connexion avec la base de données SQL*/
         const connection = await pool.getConnection();
@@ -58,7 +59,6 @@ const userGetAll = async (request: Request, response: Response) => {
             let user = rowToUserInterface(rows[i]);
             users.push(user);
         }
-
         /**Renvoyer une réponse de succès*/
         response.status(200).json(users);
     } catch (error) {

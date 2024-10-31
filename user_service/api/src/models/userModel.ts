@@ -15,7 +15,7 @@ interface UserInterface {
 /**
  * Mapper compte utilisateur
  */
-const rowToUserInterface = (row: RowDataPacket): UserInterface => {
+function rowToUserInterface (row: RowDataPacket): UserInterface {
     return {
         id_user: row['id_user'],
         email: row['email'],

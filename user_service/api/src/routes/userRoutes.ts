@@ -1,5 +1,5 @@
-import express from 'express';
-import { userGetOne, userGetAll } from "../controllers/userController";
+let express = require('express');
+let { userGetOne, userGetAll } = require("../controllers/userController");
 
 const router = express.Router();
 
