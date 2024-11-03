@@ -1,0 +1,2 @@
+INSERT INTO T_DELIVERY (ID_USER, NAME, VEHICLE, DELIVERY_COUNT, RATING)
+VALUES(1,'Filuti', 'Car',17,4.706),(4,'Tom', 'Bike', 5,5),(9,'Slack', 'Bicycle', 12, 4);
