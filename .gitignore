@@ -1,0 +1,6 @@
+
+.idea
+./user_service/api/config.json
+./user_service/api/package-lock.json
+./user_service/api/dist
+./user_service/api/node_modules
