@@ -1,5 +1,5 @@
 import {pool} from '../../connectionDb'
-import {UserInterface, rowToUserInterface} from "../models/userModel";
+import {UserInterface, rowToUserInterface} from "../models/utilisateurModel";
 import {RowDataPacket} from "mysql2/promise";
 import express from 'express';
 
