@@ -1,11 +1,10 @@
 import {pool} from '../../connectionDb'
 import {UserInterface, rowToUserInterface} from "../models/userModel";
 import {RowDataPacket} from "mysql2/promise";
-import { Request, Response } from "express";
-import {Next} from "mysql2/typings/mysql/lib/parsers/typeCast";
+import express from 'express';
 
 /**Recherche d'un utilisateur*/
-const userGetOne = async (request: Request, response: Response, next:Next) => {
+const userGetOne = async (request: express.Request, response: express.Response):Promise<void> => {
     try {
         /**Creer une connexion avec la base de données SQL*/
         const connection = await pool.getConnection();
@@ -21,13 +20,14 @@ const userGetOne = async (request: Request, response: Response, next:Next) => {
 
         if (rows.length === 0) {
             /** Renvoyer une reponse not found*/
-            return response.status(404).json({message: 'Utilisateur non trouvé'});
+            response.status(404).json({message: 'Utilisateur non trouvé'});
+        }else {
+
+            /**Renvoyer une réponse de succès*/
+            const user = rowToUserInterface(rows[0]);
+
+            response.status(200).json(user);
         }
-
-        /**Renvoyer une réponse de succès*/
-        const user = rowToUserInterface(rows[0]);
-
-        return response.status(200).json(user);
 
     } catch (error) {
         /**Renvoyer une réponse d'echec*/
@@ -36,7 +36,7 @@ const userGetOne = async (request: Request, response: Response, next:Next) => {
 };
 
 /**Liste de toutes les mutuelles*/
-const userGetAll = async (request: Request, response: Response) => {
+const userGetAll = async (request: express.Request, response: express.Response):Promise<void> => {
     try {
         let users : UserInterface[] = [];
 
@@ -51,21 +51,21 @@ const userGetAll = async (request: Request, response: Response) => {
 
         /** Renvoyer une reponse not found*/
         if (rows.length === 0) {
-            return response.status(404).json({ message: 'Aucun utilisateur trouvé' });
-        }
+            response.status(404).json({ message: 'Aucun utilisateur trouvé' });
+        }else {
 
-        /**Traitement des donnees de retour de la requete*/
-        for(let i=0;i<rows.length;i++){
-            let user = rowToUserInterface(rows[i]);
-            users.push(user);
+            /**Traitement des donnees de retour de la requete*/
+            for (let i = 0; i < rows.length; i++) {
+                let user = rowToUserInterface(rows[i]);
+                users.push(user);
+            }
+            /**Renvoyer une réponse de succès*/
+            response.status(200).json(users);
         }
-        /**Renvoyer une réponse de succès*/
-        response.status(200).json(users);
     } catch (error) {
-
         /**Renvoyer une réponse  d'echec*/
         response.status(500).json({ message: 'Erreur serveur' });
     }
 };
 
-export {userGetOne, userGetAll};
+export{userGetOne, userGetAll};
