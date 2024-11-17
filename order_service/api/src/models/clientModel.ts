@@ -1,7 +1,7 @@
 import {RowDataPacket} from "mysql2/promise";
 
 /**
- * Interface compte utilisateur
+ * Interface client
  */
 interface ClientInterface {
     client_id: number;
@@ -13,7 +13,7 @@ interface ClientInterface {
 }
 
 /**
- * Mapper compte utilisateur
+ * Mapper client
  */
 function rowToClientInterface (row: RowDataPacket): ClientInterface {
     return {
