@@ -1,71 +1,95 @@
-import {pool} from '../../connectionDb'
-import {UserInterface, rowToUserInterface} from "../models/userModel";
-import {RowDataPacket} from "mysql2/promise";
+import { pool } from '../../connectionDb';
+import { UserInterface, rowToUserInterface } from "../models/userModel";
+import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import express from 'express';
 
-/**Recherche d'un utilisateur*/
-const userGetOne = async (request: express.Request, response: express.Response):Promise<void> => {
+/** Création d'un utilisateur */
+const userCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        /**Creer une connexion avec la base de données SQL*/
-        const connection = await pool.getConnection();
+        console.log('Request body:', request.body); // Log pour vérifier les données reçues
 
-        /**Recuperation des données dans les parametres de la requete*/
-        const id = request.params.id;
+        const { email, password, firstname, lastname } = request.body;
 
-        /**Execute une requete sur la base de données SQL pour recuperer un dossier admin*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM user WHERE id_user = ?', [id]);
-
-        /**Fermeture de la connexion avec la base de données SQL*/
-        connection.release();
-
-        if (rows.length === 0) {
-            /** Renvoyer une reponse not found*/
-            response.status(404).json({message: 'Utilisateur non trouvé'});
-        }else {
-
-            /**Renvoyer une réponse de succès*/
-            const user = rowToUserInterface(rows[0]);
-
-            response.status(200).json(user);
+        // Validation des champs obligatoires
+        if (!email || !password || !firstname || !lastname) {
+            response.status(400).json({ message: 'Tous les champs sont requis' });
+            return;
         }
 
+        const connection = await pool.getConnection();
+
+        // Insertion de l'utilisateur dans la base de données
+        const [result] = await connection.execute<ResultSetHeader>(
+            'INSERT INTO user (email, password, firstname, lastname) VALUES (?, ?, ?, ?)',
+            [email, password, firstname, lastname]
+        );
+
+        connection.release();
+
+        if (result.affectedRows > 0) {
+            response.status(201).json({ message: 'Utilisateur créé avec succès', id_user: result.insertId });
+        } else {
+            response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur' });
+        }
     } catch (error) {
-        /**Renvoyer une réponse d'echec*/
-        response.status(500).json({message: 'Erreur serveur'});
+        console.error('Error in userCreate:', error); // Log des erreurs pour le débogage
+        if (error instanceof Error) {
+            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+        } else {
+            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+        }
     }
 };
 
-/**Liste de toutes les mutuelles*/
-const userGetAll = async (request: express.Request, response: express.Response):Promise<void> => {
+/** Recherche d'un utilisateur */
+const userGetOne = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        let users : UserInterface[] = [];
-
-        /** Obtenir une connexion à partir du pool*/
         const connection = await pool.getConnection();
+        const id = request.params.id;
 
-        /** Exécuter une requête SQL*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM user');
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM user WHERE id_user = ?', [id]);
 
-        /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
 
-        /** Renvoyer une reponse not found*/
+        if (rows.length === 0) {
+            response.status(404).json({ message: 'Utilisateur non trouvé' });
+        } else {
+            const user = rowToUserInterface(rows[0]);
+            response.status(200).json(user);
+        }
+    } catch (error) {
+        console.error('Error in userGetOne:', error);
+        if (error instanceof Error) {
+            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+        } else {
+            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+        }
+    }
+};
+
+/** Liste de tous les utilisateurs */
+const userGetAll = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        const connection = await pool.getConnection();
+
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM user');
+
+        connection.release();
+
         if (rows.length === 0) {
             response.status(404).json({ message: 'Aucun utilisateur trouvé' });
-        }else {
-
-            /**Traitement des donnees de retour de la requete*/
-            for (let i = 0; i < rows.length; i++) {
-                let user = rowToUserInterface(rows[i]);
-                users.push(user);
-            }
-            /**Renvoyer une réponse de succès*/
+        } else {
+            const users: UserInterface[] = rows.map(row => rowToUserInterface(row));
             response.status(200).json(users);
         }
     } catch (error) {
-        /**Renvoyer une réponse  d'echec*/
-        response.status(500).json({ message: 'Erreur serveur' });
+        console.error('Error in userGetAll:', error);
+        if (error instanceof Error) {
+            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+        } else {
+            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+        }
     }
 };
 
-export{userGetOne, userGetAll};
+export { userGetOne, userGetAll, userCreate };

@@ -1,21 +1,14 @@
-import {RowDataPacket} from "mysql2/promise";
+import { RowDataPacket } from "mysql2";
 
-/**
- * Interface compte utilisateur
- */
 interface UserInterface {
     id_user: number;
     email: string;
     password: string;
     firstname: string;
     lastname: string;
-    // TODO reste de l'interface
 }
 
-/**
- * Mapper compte utilisateur
- */
-function rowToUserInterface (row: RowDataPacket): UserInterface {
+function rowToUserInterface(row: RowDataPacket): UserInterface {
     return {
         id_user: row['id_user'],
         email: row['email'],
