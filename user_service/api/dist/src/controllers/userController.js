@@ -15,26 +15,24 @@ const userModel_1 = require("../models/userModel");
 /** Création d'un utilisateur */
 const userCreate = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Request body:', request.body); // Log pour vérifier les données reçues
-        const { email, password, firstname, lastname } = request.body;
-        // Validation des champs obligatoires
-        if (!email || !password || !firstname || !lastname) {
-            response.status(400).json({ message: 'Tous les champs sont requis' });
+        console.log('Request body:', request.body);
+        const { first_name, last_name, username, email, password, phone, role_id } = request.body;
+        if (!first_name || !last_name || !username || !email || !password || !role_id) {
+            response.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis.' });
             return;
         }
         const connection = yield connectionDb_1.pool.getConnection();
-        // Insertion de l'utilisateur dans la base de données
-        const [result] = yield connection.execute('INSERT INTO user (email, password, firstname, lastname) VALUES (?, ?, ?, ?)', [email, password, firstname, lastname]);
+        const [result] = yield connection.execute('INSERT INTO users (first_name, last_name, username, email, password, phone, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)', [first_name, last_name, username, email, password, phone || null, role_id]);
         connection.release();
         if (result.affectedRows > 0) {
-            response.status(201).json({ message: 'Utilisateur créé avec succès', id_user: result.insertId });
+            response.status(201).json({ message: 'Utilisateur créé avec succès', userId: result.insertId });
         }
         else {
-            response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur' });
+            response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.' });
         }
     }
     catch (error) {
-        console.error('Error in userCreate:', error); // Log des erreurs pour le débogage
+        console.error('Error in userCreate:', error);
         if (error instanceof Error) {
             response.status(500).json({ message: 'Erreur serveur', error: error.message });
         }
@@ -49,7 +47,8 @@ const userGetOne = (request, response) => __awaiter(void 0, void 0, void 0, func
     try {
         const connection = yield connectionDb_1.pool.getConnection();
         const id = request.params.id;
-        const [rows] = yield connection.execute('SELECT * FROM user WHERE id_user = ?', [id]);
+        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name FROM users
+             LEFT JOIN roles ON users.role_id = roles.id WHERE users.id = ?`, [id]);
         connection.release();
         if (rows.length === 0) {
             response.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -74,7 +73,8 @@ exports.userGetOne = userGetOne;
 const userGetAll = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connection = yield connectionDb_1.pool.getConnection();
-        const [rows] = yield connection.execute('SELECT * FROM user');
+        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name FROM users
+             LEFT JOIN roles ON users.role_id = roles.id`);
         connection.release();
         if (rows.length === 0) {
             response.status(404).json({ message: 'Aucun utilisateur trouvé' });

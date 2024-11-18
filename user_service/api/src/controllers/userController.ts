@@ -6,33 +6,31 @@ import express from 'express';
 /** Création d'un utilisateur */
 const userCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        console.log('Request body:', request.body); // Log pour vérifier les données reçues
+        console.log('Request body:', request.body);
 
-        const { email, password, firstname, lastname } = request.body;
+        const { first_name, last_name, username, email, password, phone, role_id } = request.body;
 
-        // Validation des champs obligatoires
-        if (!email || !password || !firstname || !lastname) {
-            response.status(400).json({ message: 'Tous les champs sont requis' });
+        if (!first_name || !last_name || !username || !email || !password || !role_id) {
+            response.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis.' });
             return;
         }
 
         const connection = await pool.getConnection();
 
-        // Insertion de l'utilisateur dans la base de données
         const [result] = await connection.execute<ResultSetHeader>(
-            'INSERT INTO user (email, password, firstname, lastname) VALUES (?, ?, ?, ?)',
-            [email, password, firstname, lastname]
+            'INSERT INTO users (first_name, last_name, username, email, password, phone, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [first_name, last_name, username, email, password, phone || null, role_id]
         );
 
         connection.release();
 
         if (result.affectedRows > 0) {
-            response.status(201).json({ message: 'Utilisateur créé avec succès', id_user: result.insertId });
+            response.status(201).json({ message: 'Utilisateur créé avec succès', userId: result.insertId });
         } else {
-            response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur' });
+            response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.' });
         }
     } catch (error) {
-        console.error('Error in userCreate:', error); // Log des erreurs pour le débogage
+        console.error('Error in userCreate:', error);
         if (error instanceof Error) {
             response.status(500).json({ message: 'Erreur serveur', error: error.message });
         } else {
@@ -47,7 +45,11 @@ const userGetOne = async (request: express.Request, response: express.Response):
         const connection = await pool.getConnection();
         const id = request.params.id;
 
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM user WHERE id_user = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            `SELECT users.*, roles.name AS role_name FROM users
+             LEFT JOIN roles ON users.role_id = roles.id WHERE users.id = ?`,
+            [id]
+        );
 
         connection.release();
 
@@ -72,7 +74,10 @@ const userGetAll = async (request: express.Request, response: express.Response):
     try {
         const connection = await pool.getConnection();
 
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM user');
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            `SELECT users.*, roles.name AS role_name FROM users
+             LEFT JOIN roles ON users.role_id = roles.id`
+        );
 
         connection.release();
 

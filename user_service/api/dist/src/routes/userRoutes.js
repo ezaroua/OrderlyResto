@@ -9,8 +9,8 @@ const router = express_1.default.Router();
 /**
  * Routes d'accès aux utilisateurs
  */
-router.get('/users/:id', userController_1.userGetOne);
-router.get('/users/', userController_1.userGetAll);
-router.post('/users/', userController_1.userCreate);
+router.get('/users/:id', userController_1.userGetOne); // Récupérer un utilisateur par ID
+router.get('/users', userController_1.userGetAll); // Récupérer tous les utilisateurs
+router.post('/users', userController_1.userCreate); // Créer un nouvel utilisateur
 exports.default = router;
 //# sourceMappingURL=userRoutes.js.map
