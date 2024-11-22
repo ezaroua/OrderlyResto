@@ -13,11 +13,10 @@ const deliveryGetOne = async (request: express.Request, response: express.Respon
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un dossier admin*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_delivery = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
-
         if (rows.length === 0) {
             /** Renvoyer une reponse not found*/
             response.status(404).json({message: 'Utilisateur non trouvé'});

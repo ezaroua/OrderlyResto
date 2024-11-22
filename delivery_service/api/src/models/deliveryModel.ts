@@ -21,7 +21,7 @@ function rowToDeliveryInterface (row: RowDataPacket): DeliveryInterface {
         name: row['NAME'],
         vehicle: row['VEHICLE'],
         delivery_count: row['DELIVERY_COUNT'],
-        rating: row['RATING']
+        rating: Math.round(row['RATING'] * 100)/100
     };
 }
 

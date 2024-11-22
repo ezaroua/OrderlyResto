@@ -20,7 +20,7 @@ const deliveryGetOne = (request, response) => __awaiter(void 0, void 0, void 0, 
         /**Recuperation des données dans les parametres de la requete*/
         const id = request.params.id;
         /**Execute une requete sur la base de données SQL pour recuperer un dossier admin*/
-        const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_delivery = ?', [id]);
+        const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
         if (rows.length === 0) {
