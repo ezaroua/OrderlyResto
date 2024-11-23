@@ -1,6 +1,6 @@
 import {pool} from '../../connectionDb'
 import {ClientInterface, rowToClientInterface} from "../models/clientModel";
-import {RowDataPacket} from "mysql2/promise";
+import {ResultSetHeader, RowDataPacket} from "mysql2/promise";
 import express from 'express';
 
 /**Recherche d'un client*/
@@ -70,4 +70,151 @@ const clientGetAll = async (request: express.Request, response: express.Response
     }
 };
 
-export {clientGetOne, clientGetAll};
+/**Création d'un client */
+const clientCreate = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        /** Récupération des paramètres de la requête */
+        const { phone, address, city, postal_code, user_id } = request.body;
+
+        /** Valider l'objet en le convertissant au format ClientInterface */
+        const client: ClientInterface = {
+            client_id: 0, // Auto-incrémenté par la BDD
+            phone,
+            address,
+            city,
+            postal_code,
+            user_id,
+        };
+
+        /** Vérification des paramètres obligatoires */
+        if (!phone || !address || !city || !postal_code || !user_id) {
+            response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
+            return;
+        }
+
+        /** Insertion en BDD */
+        const connection = await pool.getConnection();
+        const [result] = await connection.execute<ResultSetHeader>(
+            'INSERT INTO client (phone, address, city, postal_code, user_id) VALUES (?, ?, ?, ?, ?)',
+            [client.phone, client.address, client.city, client.postal_code, client.user_id]
+        );
+        connection.release();
+
+        /** Retour de la requête */
+        response.status(201).json({ message: 'Client créé avec succès.', client_id: result.insertId });
+    } catch (error) {
+        response.status(500).json({ message: 'Erreur lors de la création du client.' });
+    }
+};
+
+/**Mise à jour d'un client */
+const clientUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        /** ID du client à modifier */
+        const id = request.params.id;
+        /** Récupération des paramètres de la requête */
+        const { phone, address, city, postal_code } = request.body;
+
+        /** Vérification des paramètres obligatoires */
+        if (!phone || !address || !city || !postal_code) {
+            response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
+            return;
+        }
+
+        /** Valider l'objet en le convertissant au format OrderInterface */
+        /** Partiel parce que pas besoin de pouvoir tout modifier : */
+        /**
+         * user_id : on ne change pas le user : autant changer de client
+         */
+        const client: Partial<ClientInterface> = {
+            phone,
+            address,
+            city,
+            postal_code,
+        };
+
+        /** Modification en BDD si l'id indiqué existe */
+        const connection = await pool.getConnection();
+        const [result] = await connection.execute<ResultSetHeader>(
+            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? WHERE client_id = ?',
+            [client.phone, client.address, client.city, client.postal_code, id]
+        );
+        connection.release();
+
+        /** Retour en fonction d'une modif ou non */
+        if (result.affectedRows === 0) {
+            response.status(404).json({ message: 'Client non trouvé.' });
+        } else {
+            response.status(200).json({ message: 'Client mis à jour avec succès.' });
+        }
+    } catch (error) {
+        response.status(500).json({ message: 'Erreur lors de la mise à jour du client.' });
+    }
+};
+
+/**Mise à jour partielle d'un client */
+const clientPatch = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        /** ID du client à modifier */
+        const id = request.params.id;
+        /** Récupération des paramètres de la requête */
+        /** (1 ou plusieurs champs de client à modifier) */
+        const updates = request.body;
+
+        /** Vérifier si des données sont fournies */
+        if (Object.keys(updates).length === 0) {
+            response.status(400).json({ message: 'Aucune donnée à mettre à jour.' });
+            return;
+        }
+
+        const connection = await pool.getConnection();
+
+        /** Générer dynamiquement la requête SQL et les valeurs */
+        const fields = Object.keys(updates).map(field => `${field} = ?`).join(', ');
+        const values = Object.values(updates);
+        values.push(id);
+
+        /** Modification en BDD si l'id indiqué existe */
+        const [result] = await connection.execute<ResultSetHeader>(
+            `UPDATE client SET ${fields} WHERE client_id = ?`,
+            values
+        );
+        connection.release();
+
+        /** Retour en fonction d'une modif ou non */
+        if (result.affectedRows === 0) {
+            response.status(404).json({ message: 'Client non trouvé.' });
+        } else {
+            response.status(200).json({ message: 'Client mis à jour partiellement avec succès.' });
+        }
+    } catch (error) {
+        response.status(500).json({ message: 'Erreur lors de la mise à jour partielle du client.' });
+    }
+};
+
+/**Suppression d'un client */
+const clientDelete = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        /** ID du client à supprimer */
+        const id = request.params.id;
+
+        /** Suppression en BDD */
+        const connection = await pool.getConnection();
+        const [result] = await connection.execute<ResultSetHeader>(
+            'DELETE FROM client WHERE client_id = ?',
+            [id]
+        );
+        connection.release();
+
+        /** Retour en fonction d'une suppression ou non */
+        if (result.affectedRows === 0) {
+            response.status(404).json({ message: 'Client non trouvé.' });
+        } else {
+            response.status(200).json({ message: 'Client supprimé avec succès.' });
+        }
+    } catch (error) {
+        response.status(500).json({ message: 'Erreur lors de la suppression du client.' });
+    }
+};
+
+export {clientGetOne, clientGetAll, clientCreate, clientUpdate, clientPatch, clientDelete};

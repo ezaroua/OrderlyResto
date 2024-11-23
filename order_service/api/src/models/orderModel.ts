@@ -22,7 +22,7 @@ interface OrderInterface {
     order_id: number;
     shop_id: number;
     client_id: number;
-    delivery_id: number;
+    delivery_id?: number;
     status: OrderStatus; 
     total_amount: number;
     items: OrderItem[];
