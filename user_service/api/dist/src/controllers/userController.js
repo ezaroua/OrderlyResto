@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userCreate = exports.userGetAll = exports.userGetOne = void 0;
+exports.userDelete = exports.userUpdate = exports.userCreate = exports.userGetAll = exports.userGetOne = void 0;
 const connectionDb_1 = require("../../connectionDb");
 const userModel_1 = require("../models/userModel");
 /** Création d'un utilisateur */
@@ -95,4 +95,76 @@ const userGetAll = (request, response) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.userGetAll = userGetAll;
+/** Mise à jour d'un utilisateur */
+const userUpdate = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = request.params.id;
+        const { first_name, last_name, username, email, phone, role_id } = request.body;
+        // Vérification des champs obligatoires
+        if (!first_name || !last_name || !username || !email || !role_id) {
+            response.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis.' });
+            return;
+        }
+        const connection = yield connectionDb_1.pool.getConnection();
+        // Vérifier si l'utilisateur existe avant de le mettre à jour
+        const [existingUserRows] = yield connection.execute('SELECT * FROM users WHERE id = ?', [id]);
+        if (existingUserRows.length === 0) {
+            connection.release();
+            response.status(404).json({ message: 'Utilisateur non trouvé' });
+            return;
+        }
+        // Mise à jour de l'utilisateur
+        const [result] = yield connection.execute('UPDATE users SET first_name = ?, last_name = ?, username = ?, email = ?, phone = ?, role_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [first_name, last_name, username, email, phone || null, role_id, id]);
+        connection.release();
+        if (result.affectedRows > 0) {
+            response.status(200).json({ message: 'Utilisateur mis à jour avec succès' });
+        }
+        else {
+            response.status(500).json({ message: 'Erreur lors de la mise à jour de l\'utilisateur' });
+        }
+    }
+    catch (error) {
+        console.error('Error in userUpdate:', error);
+        if (error instanceof Error) {
+            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+        }
+        else {
+            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+        }
+    }
+});
+exports.userUpdate = userUpdate;
+/** Suppression d'un utilisateur */
+const userDelete = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = request.params.id;
+        const connection = yield connectionDb_1.pool.getConnection();
+        // Vérifier si l'utilisateur existe avant de le supprimer
+        const [existingUserRows] = yield connection.execute('SELECT * FROM users WHERE id = ?', [id]);
+        if (existingUserRows.length === 0) {
+            connection.release();
+            response.status(404).json({ message: 'Utilisateur non trouvé' });
+            return;
+        }
+        // Suppression de l'utilisateur
+        const [result] = yield connection.execute('DELETE FROM users WHERE id = ?', [id]);
+        connection.release();
+        if (result.affectedRows > 0) {
+            response.status(200).json({ message: 'Utilisateur supprimé avec succès' });
+        }
+        else {
+            response.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur' });
+        }
+    }
+    catch (error) {
+        console.error('Error in userDelete:', error);
+        if (error instanceof Error) {
+            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+        }
+        else {
+            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+        }
+    }
+});
+exports.userDelete = userDelete;
 //# sourceMappingURL=userController.js.map
