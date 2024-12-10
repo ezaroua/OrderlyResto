@@ -13,7 +13,7 @@ const clientGetOne = async (request: express.Request, response: express.Response
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un client*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE client_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE id_client = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -74,20 +74,22 @@ const clientGetAll = async (request: express.Request, response: express.Response
 const clientCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** Récupération des paramètres de la requête */
-        const { phone, address, city, postal_code, user_id } = request.body;
+        const { firstname, lastname, phone, address, city, postal_code, id_user } = request.body;
 
         /** Valider l'objet en le convertissant au format ClientInterface */
         const client: ClientInterface = {
-            client_id: 0, // Auto-incrémenté par la BDD
+            id_client: 0, // Auto-incrémenté par la BDD
+            firstname,
+            lastname,
             phone,
             address,
             city,
             postal_code,
-            user_id,
+            id_user,
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!phone || !address || !city || !postal_code || !user_id) {
+        if (!firstname || !lastname || !phone || !address || !city || !postal_code || !id_user) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -95,13 +97,13 @@ const clientCreate = async (request: express.Request, response: express.Response
         /** Insertion en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'INSERT INTO client (phone, address, city, postal_code, user_id) VALUES (?, ?, ?, ?, ?)',
-            [client.phone, client.address, client.city, client.postal_code, client.user_id]
+            'INSERT INTO client (phone, address, city, postal_code, id_user) VALUES (?, ?, ?, ?, ?)',
+            [client.phone, client.address, client.city, client.postal_code, client.id_user]
         );
         connection.release();
 
         /** Retour de la requête */
-        response.status(201).json({ message: 'Client créé avec succès.', client_id: result.insertId });
+        response.status(201).json({ message: 'Client créé avec succès.', id_client: result.insertId });
     } catch (error) {
         response.status(500).json({ message: 'Erreur lors de la création du client.' });
     }
@@ -113,10 +115,10 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** ID du client à modifier */
         const id = request.params.id;
         /** Récupération des paramètres de la requête */
-        const { phone, address, city, postal_code } = request.body;
+        const { firstname, lastname, phone, address, city, postal_code } = request.body;
 
         /** Vérification des paramètres obligatoires */
-        if (!phone || !address || !city || !postal_code) {
+        if (!firstname || !lastname || !phone || !address || !city || !postal_code) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -124,9 +126,11 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** Valider l'objet en le convertissant au format OrderInterface */
         /** Partiel parce que pas besoin de pouvoir tout modifier : */
         /**
-         * user_id : on ne change pas le user : autant changer de client
+         * id_user : on ne change pas le user : autant changer de client
          */
         const client: Partial<ClientInterface> = {
+            firstname,
+            lastname,
             phone,
             address,
             city,
@@ -136,8 +140,8 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? WHERE client_id = ?',
-            [client.phone, client.address, client.city, client.postal_code, id]
+            'UPDATE client SET firstname = ?, lastname = ?, phone = ?, address = ?, city = ?, postal_code = ? WHERE id_client = ?',
+            [client.firstname, client.lastname, client.phone, client.address, client.city, client.postal_code, id]
         );
         connection.release();
 
@@ -176,7 +180,7 @@ const clientPatch = async (request: express.Request, response: express.Response)
 
         /** Modification en BDD si l'id indiqué existe */
         const [result] = await connection.execute<ResultSetHeader>(
-            `UPDATE client SET ${fields} WHERE client_id = ?`,
+            `UPDATE client SET ${fields} WHERE id_client = ?`,
             values
         );
         connection.release();
@@ -201,7 +205,7 @@ const clientDelete = async (request: express.Request, response: express.Response
         /** Suppression en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'DELETE FROM client WHERE client_id = ?',
+            'DELETE FROM client WHERE id_client = ?',
             [id]
         );
         connection.release();
