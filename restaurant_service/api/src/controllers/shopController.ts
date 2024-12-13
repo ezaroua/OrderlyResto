@@ -16,7 +16,7 @@ const shopGetOne = async (request: express.Request, response: express.Response):
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un client*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM shop WHERE shop_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM shop WHERE id_shop = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -91,13 +91,14 @@ const shopCreate = async (request: express.Request, response: express.Response):
 
         /** Valider l'objet en le convertissant au format ShopInterface */
         const shop: ShopInterface = {
-            shop_id: 0, // Auto-incrémenté par la BDD
+            id_shop: 0, // Auto-incrémenté par la BDD
             shop_name,
             address,
             city,
             postal_code,
             phone,
-            shop_note: 0// 0 a la creation
+            rating_count: 0, // 0 a la creation
+            shop_rate: 0 // 0 a la creation
         };
 
         /** Vérification des paramètres obligatoires */
@@ -115,7 +116,7 @@ const shopCreate = async (request: express.Request, response: express.Response):
         connection.release();
 
         /** Retour de la requête */
-        response.status(201).json({ message: 'Restaurant créé avec succès.', shop_id: result.insertId });
+        response.status(201).json({ message: 'Restaurant créé avec succès.', id_shop: result.insertId });
     } catch (error) {
         response.status(500).json({ message: 'Erreur lors de la création du restaurant.' });
     }
@@ -153,7 +154,7 @@ const shopUpdate = async (request: express.Request, response: express.Response):
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE shop SET shop_name = ?, address = ?, city = ?, postal_code = ?, phone = ? WHERE shop_id = ?',
+            'UPDATE shop SET shop_name = ?, address = ?, city = ?, postal_code = ?, phone = ? WHERE id_shop = ?',
             [shop.shop_name, shop.address, shop.city, shop.postal_code, shop.phone, id]
         );
         connection.release();
@@ -195,7 +196,7 @@ const shopPatch = async (request: express.Request, response: express.Response): 
 
         /** Modification en BDD si l'id indiqué existe */
         const [result] = await connection.execute<ResultSetHeader>(
-            `UPDATE shop SET ${fields} WHERE shop_id = ?`,
+            `UPDATE shop SET ${fields} WHERE id_shop = ?`,
             values
         );
         connection.release();
@@ -222,7 +223,7 @@ const shopDelete = async (request: express.Request, response: express.Response):
         /** Suppression en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'DELETE FROM shop WHERE shop_id = ?',
+            'DELETE FROM shop WHERE id_shop = ?',
             [id]
         );
         connection.release();

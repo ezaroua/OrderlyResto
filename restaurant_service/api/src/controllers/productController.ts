@@ -16,7 +16,7 @@ const productGetOne = async (request: express.Request, response: express.Respons
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un client*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM product WHERE product_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM product WHERE id_product = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -83,22 +83,22 @@ const productCreate = async (request: express.Request, response: express.Respons
         /** Récupération des paramètres de la requête */
         const {
             product_name,
-            shop_id,
-            quantity,
+            id_shop,
+            stock_quantity,
             price
         } = request.body;
 
         /** Valider l'objet en le convertissant au format ProductInterface */
         const product: ProductInterface = {
-            product_id: 0, // Auto-incrémenté par la BDD
+            id_product: 0, // Auto-incrémenté par la BDD
             product_name,
-            shop_id,
-            quantity,
+            id_shop,
+            stock_quantity,
             price
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!product_name || !shop_id || !quantity || !price ) {
+        if (!product_name || !id_shop || !stock_quantity || !price ) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -106,13 +106,13 @@ const productCreate = async (request: express.Request, response: express.Respons
         /** Insertion en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'INSERT INTO product (product_name, shop_id, quantity, price) VALUES (?, ?, ?, ?)',
-            [product.product_name, product.shop_id, product.quantity, product.price]
+            'INSERT INTO product (product_name, id_shop, stock_quantity, price) VALUES (?, ?, ?, ?)',
+            [product.product_name, product.id_shop, product.stock_quantity, product.price]
         );
         connection.release();
 
         /** Retour de la requête */
-        response.status(201).json({ message: 'Produit créé avec succès.', shop_id: result.insertId });
+        response.status(201).json({ message: 'Produit créé avec succès.', id_shop: result.insertId });
     } catch (error) {
         response.status(500).json({ message: 'Erreur lors de la création du produit.' });
     }
@@ -126,10 +126,10 @@ const productUpdate = async (request: express.Request, response: express.Respons
         /** ID du produit à modifier */
         const id = request.params.id;
         /** Récupération des paramètres de la requête */
-        const { product_name, shop_id, quantity, price } = request.body;
+        const { product_name, id_shop, stock_quantity, price } = request.body;
 
         /** Vérification des paramètres obligatoires */
-        if (!product_name || !shop_id || !quantity || !price) {
+        if (!product_name || !id_shop || !stock_quantity || !price) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -141,16 +141,16 @@ const productUpdate = async (request: express.Request, response: express.Respons
          */
         const product: Partial<ProductInterface> = {
             product_name,
-            shop_id,
-            quantity,
+            id_shop,
+            stock_quantity,
             price
         };
 
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE shop SET product_name = ?, shop_id = ?, quantity = ?, price = ? WHERE product_id = ?',
-            [product.product_name, product.shop_id, product.quantity, product.price, id]
+            'UPDATE shop SET product_name = ?, id_shop = ?, stock_quantity = ?, price = ? WHERE id_product = ?',
+            [product.product_name, product.id_shop, product.stock_quantity, product.price, id]
         );
         connection.release();
 
@@ -191,7 +191,7 @@ const productPatch = async (request: express.Request, response: express.Response
 
         /** Modification en BDD si l'id indiqué existe */
         const [result] = await connection.execute<ResultSetHeader>(
-            `UPDATE product SET ${fields} WHERE product_id = ?`,
+            `UPDATE product SET ${fields} WHERE id_product = ?`,
             values
         );
         connection.release();
@@ -218,7 +218,7 @@ const productDelete = async (request: express.Request, response: express.Respons
         /** Suppression en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'DELETE FROM product WHERE product_id = ?',
+            'DELETE FROM product WHERE id_product = ?',
             [id]
         );
         connection.release();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3377
--- Généré le : dim. 08 déc. 2024 à 20:05
+-- Généré le : ven. 13 déc. 2024 à 23:10
 -- Version du serveur : 10.4.24-MariaDB
 -- Version de PHP : 8.1.6
 
@@ -24,14 +24,36 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `joinshopuser`
+--
+
+CREATE TABLE `joinshopuser` (
+  `id_shop` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `joinshopuser`
+--
+
+INSERT INTO `joinshopuser` (`id_shop`, `id_user`, `firstname`, `lastname`) VALUES
+(1, 1, 'José', 'Murinho'),
+(1, 2, 'Sergio', 'Périt'),
+(2, 3, 'Anne', 'Franck');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `product`
 --
 
 CREATE TABLE `product` (
-  `product_id` int(11) NOT NULL,
+  `id_product` int(11) NOT NULL,
   `product_name` varchar(255) NOT NULL,
-  `shop_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id_shop` int(11) NOT NULL,
+  `stock_quantity` int(11) NOT NULL,
   `price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -39,7 +61,7 @@ CREATE TABLE `product` (
 -- Déchargement des données de la table `product`
 --
 
-INSERT INTO `product` (`product_id`, `product_name`, `shop_id`, `quantity`, `price`) VALUES
+INSERT INTO `product` (`id_product`, `product_name`, `id_shop`, `stock_quantity`, `price`) VALUES
 (1, 'pates pesto', 1, 10, 7),
 (2, 'nouilles sautees', 1, 12, 9),
 (3, 'napolitaine', 2, 3, 15),
@@ -53,23 +75,24 @@ INSERT INTO `product` (`product_id`, `product_name`, `shop_id`, `quantity`, `pri
 --
 
 CREATE TABLE `shop` (
-  `shop_id` int(11) NOT NULL,
+  `id_shop` int(11) NOT NULL,
   `shop_name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
   `postal_code` int(11) NOT NULL,
   `phone` varchar(10) NOT NULL,
-  `shop_note` decimal(3,1) DEFAULT NULL
+  `rating_count` int(11) DEFAULT NULL,
+  `shop_rate` decimal(3,1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `shop`
 --
 
-INSERT INTO `shop` (`shop_id`, `shop_name`, `address`, `postal_code`, `phone`, `shop_note`) VALUES
-(1, 'restaurant 1', '10 Avenue Jean Jaurès', 69007, '0406883377', '3.0'),
-(2, 'restaurant 2', '10 rue de la Paix', 69006, '0411223344', '2.9'),
-(3, 'restaurant 3', '55 rue de la republique', 69003, '0479523149', NULL);
+INSERT INTO `shop` (`id_shop`, `shop_name`, `address`, `city`, `postal_code`, `phone`, `rating_count`, `shop_rate`) VALUES
+(1, 'restaurant 1', '10 Avenue Jean Jaurès', 'Lyon', 69007, '0406883377', 12, '3.0'),
+(2, 'restaurant 2', '10 rue de la Paix', 'Lyon', 69006, '0411223344', 3, '2.9'),
+(3, 'restaurant 3', '55 rue de la republique', 'Lyon', 69003, '0479523149', 0, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -79,14 +102,14 @@ INSERT INTO `shop` (`shop_id`, `shop_name`, `address`, `postal_code`, `phone`, `
 -- Index pour la table `product`
 --
 ALTER TABLE `product`
-  ADD PRIMARY KEY (`product_id`),
-  ADD KEY `foreign_key` (`shop_id`);
+  ADD PRIMARY KEY (`id_product`),
+  ADD KEY `foreign_key` (`id_shop`);
 
 --
 -- Index pour la table `shop`
 --
 ALTER TABLE `shop`
-  ADD PRIMARY KEY (`shop_id`);
+  ADD PRIMARY KEY (`id_shop`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -96,13 +119,13 @@ ALTER TABLE `shop`
 -- AUTO_INCREMENT pour la table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `shop`
 --
 ALTER TABLE `shop`
-  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_shop` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Contraintes pour les tables déchargées
@@ -112,7 +135,7 @@ ALTER TABLE `shop`
 -- Contraintes pour la table `product`
 --
 ALTER TABLE `product`
-  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `shop` (`shop_id`);
+  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`id_shop`) REFERENCES `shop` (`id_shop`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

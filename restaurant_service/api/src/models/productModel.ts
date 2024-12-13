@@ -4,10 +4,10 @@ import {RowDataPacket} from "mysql2/promise";
  * Interface
  */
 interface ProductInterface {
-    product_id: number;
+    id_product: number;
     product_name: string;
-    shop_id: number;
-    quantity: number;
+    id_shop: number;
+    stock_quantity: number;
     price: number;
 }
 
@@ -16,10 +16,10 @@ interface ProductInterface {
  */
 function rowToProductInterface (row: RowDataPacket): ProductInterface {
     return {
-        product_id: row['product_id'],
+        id_product: row['id_product'],
         product_name: row['product_name'],
-        shop_id: row['shop_id'],
-        quantity: row['quantity'],
+        id_shop: row['id_shop'],
+        stock_quantity: row['stock_quantity'],
         price: row['price']
     };
 }
