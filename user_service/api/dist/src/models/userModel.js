@@ -3,12 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.rowToUserInterface = rowToUserInterface;
 function rowToUserInterface(row) {
     return {
-        id: row['id'],
-        first_name: row['first_name'],
-        last_name: row['last_name'],
-        username: row['username'],
+        user_id: row['user_id'],
         email: row['email'],
-        phone: row['phone'],
+        password: row['password'],
         role_id: row['role_id'],
         role_name: row['role_name'], // Nom du rôle obtenu via jointure
         created_at: row['created_at'],

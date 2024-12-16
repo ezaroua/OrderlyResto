@@ -12,7 +12,7 @@ const router = express_1.default.Router();
 router.get('/users/:id', userController_1.userGetOne); // Récupérer un utilisateur par ID
 router.get('/users', userController_1.userGetAll); // Récupérer tous les utilisateurs
 router.post('/users', userController_1.userCreate); // Créer un nouvel utilisateur
-router.put('/users/:id', userController_1.userUpdate);
-router.delete('/users/:id', userController_1.userDelete);
+router.put('/users/:id', userController_1.userUpdate); //mise à jours les info d'utilisateur
+router.delete('/users/:id', userController_1.userDelete); //Supprimer un utilisateur
 exports.default = router;
 //# sourceMappingURL=userRoutes.js.map
