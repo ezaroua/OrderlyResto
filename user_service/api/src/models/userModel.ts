@@ -1,28 +1,33 @@
-import {RowDataPacket} from "mysql2/promise";
+import { RowDataPacket } from 'mysql2/promise';
 
-/**
- * Interface compte utilisateur
- */
-interface UserInterface {
-    id_user: number;
-    email: string;
-    password: string;
-    firstname: string;
-    lastname: string;
-    // TODO reste de l'interface
+export enum UserVerificationStatus {
+    SUCCESS = 200,            // Utilisateur vérifié avec succès
+    INVALID_INPUT = 400,      // Email ou mot de passe manquant
+    INVALID_EMAIL = 401,      // Email non trouvé
+    INVALID_PASSWORD = 402,   // Mot de passe incorrect
+    SERVER_ERROR = 500        // Erreur serveur
 }
 
-/**
- * Mapper compte utilisateur
- */
-function rowToUserInterface (row: RowDataPacket): UserInterface {
+interface UserInterface {
+    user_id: number;
+    email: string;
+    role_id: number;
+    role_name?: string;
+    created_at: string;
+    updated_at: string;
+    password: string;
+}
+
+function rowToUserInterface(row: RowDataPacket): UserInterface {
     return {
-        id_user: row['id_user'],
+        user_id: row['user_id'],
         email: row['email'],
         password: row['password'],
-        firstname: row['firstname'],
-        lastname: row['lastname']
+        role_id: row['role_id'],
+        role_name: row['role_name'], // Nom du rôle obtenu via jointure
+        created_at: row['created_at'],
+        updated_at: row['updated_at']
     };
 }
 
-export {UserInterface, rowToUserInterface};
+export { UserInterface, rowToUserInterface };
