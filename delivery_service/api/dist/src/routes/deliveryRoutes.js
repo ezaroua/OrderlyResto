@@ -12,5 +12,7 @@ const router = express_1.default.Router();
 router.get('/delivery/:id', deliveryController_1.deliveryGetOne);
 router.get('/delivery/', deliveryController_1.deliveryGetAll);
 router.put('/rating/:id', deliveryController_1.rateDelivery);
+router.post('/register/', deliveryController_1.registerDelivery);
+router.put('/update/:id', deliveryController_1.updateDelivery);
 exports.default = router;
 //# sourceMappingURL=deliveryRoutes.js.map

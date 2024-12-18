@@ -1,5 +1,5 @@
 import express from 'express';
-import { deliveryGetOne, deliveryGetAll, rateDelivery } from "../controllers/deliveryController";
+import { deliveryGetOne, deliveryGetAll, rateDelivery, registerDelivery, updateDelivery } from "../controllers/deliveryController";
 const router = express.Router();
 
 /**
@@ -7,6 +7,7 @@ const router = express.Router();
  */
 router.get('/delivery/:id', deliveryGetOne);
 router.get('/delivery/', deliveryGetAll);
-router.put('/rating/:id', rateDelivery)
-
+router.put('/rating/:id', rateDelivery);
+router.post('/register/', registerDelivery);
+router.put('/update/:id', updateDelivery);
 export default router;

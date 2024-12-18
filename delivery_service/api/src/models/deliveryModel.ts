@@ -4,10 +4,12 @@ import {RowDataPacket} from "mysql2/promise";
  * Interface compte utilisateur
  */
 interface DeliveryInterface {
+    id_delivery_user: string;
     id_user: number;
-    name: string;
+    first_name: string;
+    last_name: string;
     vehicle: string;
-    delivery_count: number;
+    rating_count: number;
     rating: number;
     // TODO reste de l'interface
 }
@@ -17,11 +19,13 @@ interface DeliveryInterface {
  */
 function rowToDeliveryInterface (row: RowDataPacket): DeliveryInterface {
     return {
-        id_user: row['ID_USER'],
-        name: row['NAME'],
-        vehicle: row['VEHICLE'],
-        delivery_count: row['DELIVERY_COUNT'],
-        rating: Math.round(row['RATING'] * 100)/100
+        id_delivery_user: row['id_delivery_user'],
+        id_user: row['id_user'],
+        first_name: row['first_name'],
+        last_name: row['last_name'],
+        vehicle: row['vehicle'],
+        rating_count: row['rating_count'],
+        rating: Math.round(row['rating'] * 100)/100
     };
 }
 
