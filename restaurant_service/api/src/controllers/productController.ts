@@ -83,6 +83,7 @@ const productCreate = async (request: express.Request, response: express.Respons
         /** Récupération des paramètres de la requête */
         const {
             product_name,
+            description,
             id_shop,
             stock_quantity,
             price
@@ -92,13 +93,14 @@ const productCreate = async (request: express.Request, response: express.Respons
         const product: ProductInterface = {
             id_product: 0, // Auto-incrémenté par la BDD
             product_name,
+            description,
             id_shop,
             stock_quantity,
             price
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!product_name || !id_shop || !stock_quantity || !price ) {
+        if (!product_name || !description || !id_shop || !stock_quantity || !price ) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -106,8 +108,8 @@ const productCreate = async (request: express.Request, response: express.Respons
         /** Insertion en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'INSERT INTO product (product_name, id_shop, stock_quantity, price) VALUES (?, ?, ?, ?)',
-            [product.product_name, product.id_shop, product.stock_quantity, product.price]
+            'INSERT INTO product (product_name, description, id_shop, stock_quantity, price) VALUES (?, ?, ?, ?, ?)',
+            [product.product_name, product.description, product.id_shop, product.stock_quantity, product.price]
         );
         connection.release();
 
@@ -126,10 +128,10 @@ const productUpdate = async (request: express.Request, response: express.Respons
         /** ID du produit à modifier */
         const id = request.params.id;
         /** Récupération des paramètres de la requête */
-        const { product_name, id_shop, stock_quantity, price } = request.body;
+        const { product_name, description, id_shop, stock_quantity, price } = request.body;
 
         /** Vérification des paramètres obligatoires */
-        if (!product_name || !id_shop || !stock_quantity || !price) {
+        if (!product_name || !description || !id_shop || !stock_quantity || !price) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -141,6 +143,7 @@ const productUpdate = async (request: express.Request, response: express.Respons
          */
         const product: Partial<ProductInterface> = {
             product_name,
+            description,
             id_shop,
             stock_quantity,
             price
@@ -149,8 +152,8 @@ const productUpdate = async (request: express.Request, response: express.Respons
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE shop SET product_name = ?, id_shop = ?, stock_quantity = ?, price = ? WHERE id_product = ?',
-            [product.product_name, product.id_shop, product.stock_quantity, product.price, id]
+            'UPDATE product SET product_name = ?, description = ?, id_shop = ?, stock_quantity = ?, price = ? WHERE id_product = ?',
+            [product.product_name, product.description, product.id_shop, product.stock_quantity, product.price, id]
         );
         connection.release();
 

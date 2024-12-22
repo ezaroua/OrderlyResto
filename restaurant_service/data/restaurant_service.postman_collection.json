@@ -1,0 +1,342 @@
+{
+	"info": {
+		"_postman_id": "7b5213d1-ecea-4cbd-a1e3-d7e69a798552",
+		"name": "restaurant_service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27527112"
+	},
+	"item": [
+		{
+			"name": "shop",
+			"item": [
+				{
+					"name": "GetOne shop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/shop/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"shop",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll shop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/shop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"shop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create shop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"shop_name\": \"abc\",\r\n    \"address\":\"abc\",\r\n    \"city\":\"abc\",\r\n    \"postal_code\":123,\r\n    \"phone\":\"1234567890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/shop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"shop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update shop",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"shop_name\": \"def\",\r\n    \"address\":\"def\",\r\n    \"city\":\"def\",\r\n    \"postal_code\":456,\r\n    \"phone\":\"0987654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/shop/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"shop",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete shop",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/shop/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"shop",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rate shop",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n    \"rating\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/shop/rate/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"shop",
+								"rate",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "product",
+			"item": [
+				{
+					"name": "GetAll product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/product",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOne product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/product/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"product",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_name\": \"abc\",\r\n    \"description\":\"abc\",\r\n    \"id_shop\":3,\r\n    \"stock_quantity\":123,\r\n    \"price\":123\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/product",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_name\": \"def\",\r\n    \"description\":\"def\",\r\n    \"id_shop\":5,\r\n    \"stock_quantity\":456,\r\n    \"price\":456\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/product/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"product",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5004/product/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5004",
+							"path": [
+								"product",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
