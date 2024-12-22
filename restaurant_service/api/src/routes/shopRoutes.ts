@@ -5,7 +5,8 @@ import {
     shopCreate,
     shopUpdate,
     shopPatch,
-    shopDelete
+    shopDelete,
+    shopRate
 } from "../controllers/shopController";
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.post('/shop/', shopCreate);
 router.put('/shop/:id', shopUpdate);
 router.patch('/shop/:id', shopPatch);
 router.delete('/shop/:id', shopDelete);
+router.put('/shop/rate/:id', shopRate);
 
 export default router;

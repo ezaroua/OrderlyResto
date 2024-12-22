@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3377
--- Généré le : ven. 13 déc. 2024 à 23:10
+-- Généré le : dim. 22 déc. 2024 à 15:51
 -- Version du serveur : 10.4.24-MariaDB
 -- Version de PHP : 8.1.6
 
@@ -52,6 +52,7 @@ INSERT INTO `joinshopuser` (`id_shop`, `id_user`, `firstname`, `lastname`) VALUE
 CREATE TABLE `product` (
   `id_product` int(11) NOT NULL,
   `product_name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
   `id_shop` int(11) NOT NULL,
   `stock_quantity` int(11) NOT NULL,
   `price` float NOT NULL
@@ -61,12 +62,12 @@ CREATE TABLE `product` (
 -- Déchargement des données de la table `product`
 --
 
-INSERT INTO `product` (`id_product`, `product_name`, `id_shop`, `stock_quantity`, `price`) VALUES
-(1, 'pates pesto', 1, 10, 7),
-(2, 'nouilles sautees', 1, 12, 9),
-(3, 'napolitaine', 2, 3, 15),
-(4, '4 fromages', 2, 0, 14),
-(5, 'empanadas poulet', 3, 8, 6);
+INSERT INTO `product` (`id_product`, `product_name`, `description`, `id_shop`, `stock_quantity`, `price`) VALUES
+(1, 'pates pesto', 'pates fraiches, pesto, parmesan', 1, 10, 7),
+(2, 'nouilles sautees', 'nouilles, sauce soja, boeuf, haricots', 1, 12, 9),
+(3, 'napolitaine', 'base tomate, champignon, mozzarella, basilic', 2, 3, 15),
+(4, '4 fromages', 'mozzarella, bleu, emmental, gruyère', 2, 0, 14),
+(5, 'empanadas poulet', 'pates maison, poulet, sauce curry, fromage', 3, 8, 6);
 
 -- --------------------------------------------------------
 

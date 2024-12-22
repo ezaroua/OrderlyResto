@@ -239,4 +239,73 @@ const shopDelete = async (request: express.Request, response: express.Response):
     }
 };
 
-export {shopGetOne, shopGetAll, shopCreate, shopUpdate, shopPatch, shopDelete};
+/**
+ *  Rate
+ */
+const shopRate = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        /** Extraction et validation des données */
+        const { rating } = request.body;
+        const id = Number(request.params.id);
+
+        const validRating = [0, 1, 2, 3, 4, 5];
+
+        if (
+            typeof rating !== 'number' ||
+            !validRating.includes(rating) ||
+            !Number.isInteger(id)
+        ) {
+            response.status(400).json({ message: 'La note doit être comprise entre 0 et 5.' });
+            return;
+        }
+
+        /** Connexion à la base de données */
+        const connection = await pool.getConnection();
+
+        /** Vérification de l'existence du shop */
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            'SELECT * FROM shop WHERE id_shop = ?',
+            [id]
+        );
+
+        if (rows.length === 0) {
+            connection.release();
+            response.status(404).json({ message: 'Restaurant non trouvé.' });
+            return;
+        }
+
+        const currentShop = rows[0];
+        /** si valeur à null en base: 0*/
+        const currentRating = currentShop['shop_rate'] ?? 0;
+        const currentCount = currentShop['rating_count'] ?? 0;
+
+        /** Calcul du nouveau rating */
+        const newCount = currentCount + 1;
+        const newRating = ((currentRating * currentCount) + rating) / newCount;
+
+        /** Mise à jour du rating */
+        await connection.execute(
+            'UPDATE shop SET rating_count = ?, shop_rate = ? WHERE id_shop = ?',
+            [newCount, newRating, id]
+        );
+
+        /** Récupération des nouvelles données */
+        const [updatedRows] = await connection.execute<RowDataPacket[]>(
+            'SELECT * FROM shop WHERE id_shop = ?',
+            [id]
+        );
+
+        connection.release();
+
+        response.status(200).json({
+            message: 'Évaluation mise à jour avec succès.',
+            shop: updatedRows[0]
+        });
+
+    } catch (error) {
+        console.error('Erreur serveur:', error);
+        response.status(500).json({ message: 'Erreur serveur.' });
+    }
+};
+
+export {shopGetOne, shopGetAll, shopCreate, shopUpdate, shopPatch, shopDelete, shopRate};
