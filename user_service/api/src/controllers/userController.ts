@@ -18,10 +18,22 @@ const userCreate = async (request: express.Request, response: express.Response):
             return;
         }
 
+        const connection = await pool.getConnection();
+
+        // Vérification si l'email existe déjà
+        const [existingUsers] = await connection.execute<RowDataPacket[]>(
+            'SELECT user_id FROM users WHERE email = ?',
+            [email]
+        );
+
+        if (existingUsers.length > 0) {
+            connection.release();
+            response.status(400).json({ message: 'Cette adresse email est déjà utilisée.' });
+            return;
+        }
+
         // Hashage du mot de passe
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
-        const connection = await pool.getConnection();
 
         const [result] = await connection.execute<ResultSetHeader>(
             'INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)',
@@ -58,6 +70,7 @@ const userUpdate = async (request: express.Request, response: express.Response):
 
         const connection = await pool.getConnection();
 
+        // Vérification si l'utilisateur existe
         const [existingUserRows] = await connection.execute<RowDataPacket[]>(
             'SELECT * FROM users WHERE user_id = ?',
             [user_id]
@@ -66,6 +79,18 @@ const userUpdate = async (request: express.Request, response: express.Response):
         if (existingUserRows.length === 0) {
             connection.release();
             response.status(404).json({ message: 'Utilisateur non trouvé' });
+            return;
+        }
+
+        // Vérification si l'email existe déjà pour un autre utilisateur
+        const [existingEmailRows] = await connection.execute<RowDataPacket[]>(
+            'SELECT user_id FROM users WHERE email = ? AND user_id != ?',
+            [email, user_id]
+        );
+
+        if (existingEmailRows.length > 0) {
+            connection.release();
+            response.status(400).json({ message: 'Cette adresse email est déjà utilisée par un autre utilisateur.' });
             return;
         }
 

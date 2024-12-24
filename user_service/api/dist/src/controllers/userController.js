@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyPassword = exports.userDelete = exports.userUpdate = exports.userCreate = exports.userGetAll = exports.userGetOne = void 0;
+exports.verifyPassword = exports.verifyUser = exports.userDelete = exports.userUpdate = exports.userCreate = exports.userGetAll = exports.userGetOne = void 0;
 const connectionDb_1 = require("../../connectionDb");
 const userModel_1 = require("../models/userModel");
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -26,9 +26,16 @@ const userCreate = (request, response) => __awaiter(void 0, void 0, void 0, func
             response.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis.' });
             return;
         }
+        const connection = yield connectionDb_1.pool.getConnection();
+        // Vérification si l'email existe déjà
+        const [existingUsers] = yield connection.execute('SELECT user_id FROM users WHERE email = ?', [email]);
+        if (existingUsers.length > 0) {
+            connection.release();
+            response.status(400).json({ message: 'Cette adresse email est déjà utilisée.' });
+            return;
+        }
         // Hashage du mot de passe
         const hashedPassword = yield bcrypt_1.default.hash(password, SALT_ROUNDS);
-        const connection = yield connectionDb_1.pool.getConnection();
         const [result] = yield connection.execute('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)', [email, hashedPassword, role_id]);
         connection.release();
         if (result.affectedRows > 0) {
@@ -59,10 +66,18 @@ const userUpdate = (request, response) => __awaiter(void 0, void 0, void 0, func
             return;
         }
         const connection = yield connectionDb_1.pool.getConnection();
+        // Vérification si l'utilisateur existe
         const [existingUserRows] = yield connection.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
         if (existingUserRows.length === 0) {
             connection.release();
             response.status(404).json({ message: 'Utilisateur non trouvé' });
+            return;
+        }
+        // Vérification si l'email existe déjà pour un autre utilisateur
+        const [existingEmailRows] = yield connection.execute('SELECT user_id FROM users WHERE email = ? AND user_id != ?', [email, user_id]);
+        if (existingEmailRows.length > 0) {
+            connection.release();
+            response.status(400).json({ message: 'Cette adresse email est déjà utilisée par un autre utilisateur.' });
             return;
         }
         let query = 'UPDATE users SET email = ?, role_id = ?, updated_at = CURRENT_TIMESTAMP';
@@ -186,4 +201,50 @@ const userDelete = (request, response) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.userDelete = userDelete;
+/**
+ * Vérifie l'existence d'un utilisateur et la validité de son mot de passe
+ */
+const verifyUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (!email || !password) {
+            return {
+                status: userModel_1.UserVerificationStatus.INVALID_INPUT,
+                message: "Email et mot de passe requis"
+            };
+        }
+        const connection = yield connectionDb_1.pool.getConnection();
+        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name 
+             FROM users 
+             LEFT JOIN roles ON users.role_id = roles.id 
+             WHERE users.email = ?`, [email]);
+        connection.release();
+        if (rows.length === 0) {
+            return {
+                status: userModel_1.UserVerificationStatus.INVALID_EMAIL,
+                message: "Email non trouvé"
+            };
+        }
+        const user = rows[0];
+        const passwordMatch = yield verifyPassword(password, user.password);
+        if (!passwordMatch) {
+            return {
+                status: userModel_1.UserVerificationStatus.INVALID_PASSWORD,
+                message: "Mot de passe incorrect"
+            };
+        }
+        return {
+            status: userModel_1.UserVerificationStatus.SUCCESS,
+            user: (0, userModel_1.rowToUserInterface)(user),
+            message: "Authentification réussie"
+        };
+    }
+    catch (error) {
+        console.error('Error in verifyUser:', error);
+        return {
+            status: userModel_1.UserVerificationStatus.SERVER_ERROR,
+            message: error instanceof Error ? error.message : "Erreur serveur inconnue"
+        };
+    }
+});
+exports.verifyUser = verifyUser;
 //# sourceMappingURL=userController.js.map
