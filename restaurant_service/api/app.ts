@@ -20,4 +20,8 @@ app.get('/', (request: express.Request, response: express.Response) => {
   response.send('restaurant service');
 });
 
-app.listen(portHost);
+const port = config.HOST;
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

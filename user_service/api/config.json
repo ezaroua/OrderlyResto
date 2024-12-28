@@ -10,6 +10,6 @@
       "enableArithAbort": true,   
       "trustServerCertificate": false 
     },
-    "HOST": 5001               
+    "HOST": 5002
   }
   

@@ -1,11 +1,16 @@
 import express from 'express';
-import { userGetOne, userGetAll } from "../controllers/utilisateurController";
+import {userConnexion, userCreate, userDelete} from "../controllers/utilisateurController";
+import {checkTokenValid} from "../middleWares/auth-middlewares";
+
 const router = express.Router();
 
 /**
  * Routes d'accès aux utilisateurs
  */
-router.get('/users/:id', userGetOne);
-router.get('/users/', userGetAll);
+/**Routes pour login*/
+router.post('/login', userConnexion);
+router.post('/create', userCreate);
+router.delete('/:id', userDelete)
+
 
 export default router;
