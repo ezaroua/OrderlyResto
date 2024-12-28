@@ -13,7 +13,7 @@ const clientGetOne = async (request: express.Request, response: express.Response
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un client*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE client_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE user_id = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
