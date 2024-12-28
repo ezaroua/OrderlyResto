@@ -1,5 +1,17 @@
 
 .idea
+user_service/api/config.json
+user_service/api/package-lock.json
+user_service/api/dist
+user_service/api/node_modules
+order_service/api/config.json
+order_service/api/package-lock.json
+order_service/api/dist
+order_service/api/node_modules
+restaurant_service/api/config.json
+restaurant_service/api/package-lock.json
+restaurant_service/api/dist
+restaurant_service/api/node_modules
 ./user_service/api/config.json
 ./user_service/api/package-lock.json
 ./user_service/api/dist
