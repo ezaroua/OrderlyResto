@@ -39,7 +39,7 @@ const userCreate = (request, response) => __awaiter(void 0, void 0, void 0, func
         const [result] = yield connection.execute('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)', [email, hashedPassword, role_id]);
         connection.release();
         if (result.affectedRows > 0) {
-            response.status(201).json({ message: 'Utilisateur créé avec succès', userId: result.insertId });
+            response.status(201).json({ message: 'Utilisateur créé avec succès', user_Id: result.insertId });
         }
         else {
             response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.' });

@@ -43,7 +43,7 @@ const userCreate = async (request: express.Request, response: express.Response):
         connection.release();
 
         if (result.affectedRows > 0) {
-            response.status(201).json({message: 'Utilisateur créé avec succès', userId: result.insertId});
+            response.status(201).json({message: 'Utilisateur créé avec succès', user_Id: result.insertId});
         } else {
             response.status(500).json({message: 'Erreur lors de la création de l\'utilisateur.'});
         }

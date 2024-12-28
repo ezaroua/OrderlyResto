@@ -8,9 +8,9 @@ const router = express.Router();
  * Routes d'accès aux utilisateurs
  */
 /**Routes pour login*/
-router.post('/login', userConnexion);
+router.post('/login',userConnexion);
 router.post('/create', userCreate);
-router.delete('/:id', userDelete)
+router.delete('/:id',checkTokenValid, userDelete)
 
 
 export default router;
