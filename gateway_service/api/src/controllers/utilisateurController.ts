@@ -154,7 +154,6 @@ const userDelete = async (request: express.Request, response: express.Response):
                 break
 
             case 2:
-                console.log("test 2")
                 await axios({
                     method: 'delete',
                     url: `http://localhost:5003/clients/${userId}`,
@@ -163,7 +162,6 @@ const userDelete = async (request: express.Request, response: express.Response):
                 break
 
             case 3:
-                console.log("test 3")
                 await axios({
                     method: 'delete',
                     url: `http://localhost:5005/delivery/${userId}`,
