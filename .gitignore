@@ -1,4 +1,3 @@
-
 .idea
 user_service/api/config.json
 user_service/api/package-lock.json
@@ -23,3 +22,5 @@ restaurant_service/api/node_modules
 ./gateway_service/api/dist
 ./gateway_service/api/node_modules
 ./gateway_service/api/.env
+/delivery_service/api/dist/
+gateway_service/api/dist

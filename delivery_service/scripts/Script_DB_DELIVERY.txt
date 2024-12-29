@@ -1,0 +1,42 @@
+CREATE SCHEMA `dbdelivery` ;
+USE dbdelivery;
+CREATE TABLE t_delivery (
+	id_delivery_user int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id_user int NOT NULL,
+	first_name NVARCHAR(30) NOT NULL, 
+    last_name NVARCHAR(30) NOT NULL, 
+	vehicle NVARCHAR(30) NOT NULL,
+	rating_count int NOT NULL,
+	rating float NOT NULL
+	);
+
+INSERT INTO t_delivery (id_delivery_user, id_user, first_name, last_name, vehicle, rating_count, rating)
+VALUES
+    (1, 4, 'Filuti', 'Johnson', 'Car', 32, 4.68756),
+    (2, 7, 'Alice', 'Smith', 'Scooter', 23, 4.9),
+    (3, 9, 'Bob', 'Brown', 'Car', 15, 4.2),
+    (4, 11, 'Tom', 'Davis', 'Bike', 5, 5),
+    (5, 18, 'Charlie', 'Wilson', 'Truck', 30, 3.8),
+    (6, 19, 'Dave', 'Taylor', 'Van', 40, 4.5),
+    (7, 22, 'Eva', 'Moore', 'Motorcycle', 8, 4.7),
+    (8, 29, 'Grace', 'Anderson', 'Bike', 22, 4.1),
+    (9, 35, 'Slack', 'Thomas', 'Bicycle', 12, 4),
+    (10, 74, 'Hank', 'Jackson', 'Car', 18, 3.9),
+    (11, 90, 'Ivy', 'White', 'Bicycle', 25, 4.8),
+    (12, 95, 'Jack', 'Harris', 'Truck', 21, 4.67619),
+    (13, 98, 'Kara', 'Martin', 'Van', 20, 4.6),
+    (14, 101, 'Leo', 'Garcia', 'Car', 16, 4.4),
+    (15, 105, 'Mona', 'Martinez', 'Motorcycle', 7, 4.5),
+    (16, 107, 'Nina', 'Robinson', 'Scooter', 11, 4),
+    (17, 108, 'Oscar', 'Clark', 'Bike', 28, 4.7),
+    (18, 109, 'Paul', 'Rodriguez', 'Truck', 35, 4.2),
+    (19, 111, 'Quinn', 'Lewis', 'Bicycle', 10, 5),
+    (20, 115, 'Rita', 'Lee', 'Car', 24, 4.3),
+    (21, 118, 'Sam', 'Walker', 'Van', 32, 4.8),
+    (22, 119, 'Tommy', 'Hall', 'Scooter', 5, 3.5),
+    (23, 120, 'Uma', 'Allen', 'Motorcycle', 19, 4.9),
+    (24, 121, 'Vera', 'Young', 'Truck', 26, 4.4),
+    (25, 125, 'Will', 'King', 'Bike', 6, 3.9),
+    (26, 129, 'Xander', 'Wright', 'Car', 29, 4.2),
+    (27, 130, 'Yara', 'Scott', 'Bicycle', 13, 4.7),
+    (28, 135, 'Zane', 'Green', 'Van', 18, 4.5);
