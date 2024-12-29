@@ -1,21 +1,23 @@
-import * as config from './config.json';
+import dotenv from 'dotenv';
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
-import userRouter from "./src/routes/userRoutes";
-const app = express();
-const portHost = config.HOST;
+import userRouter from './src/routes/userRoutes';
 
-app.use(bodyParser.json());
+// Charger les variables d'environnement
+dotenv.config();
+
+const app = express();
+
+// Middleware global
+app.use(express.json());
 app.use(cors());
+
+// Routes
 app.use(userRouter);
 
-app.post('/', (request: express.Request, response: express.Response) => {
-  response.send(request.body);
-});
+// Définir le port à partir des variables d'environnement ou utiliser 5001 par défaut
+const port = process.env.PORT || 5001;
 
-app.get('/', (request: express.Request, response: express.Response) => {
-  response.send('user service');
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
-
-app.listen(portHost);
