@@ -36,7 +36,7 @@ const userGetOne = async (request: express.Request, response: express.Response):
 };
 
 /**Liste de toutes les mutuelles*/
-const userGetAll = async (request: express.Request, response: express.Response):Promise<void> => {
+const getAllRestaurant = async (request: express.Request, response: express.Response):Promise<void> => {
     try {
         let users : UserInterface[] = [];
 
@@ -68,4 +68,4 @@ const userGetAll = async (request: express.Request, response: express.Response):
     }
 };
 
-export{userGetOne, userGetAll};
+export{userGetOne, getAllRestaurant};

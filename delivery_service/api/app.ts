@@ -5,10 +5,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import userRouter from "./src/routes/deliveryRoutes";
 const app = express();
-const portHost = process.env.PORT;
-import config from 'config.json';
+import * as config from './config.json';
 
-console.log(portHost)
 app.use(bodyParser.json());
 app.use(cors());
 app.use(userRouter);
@@ -21,5 +19,8 @@ app.get('/', (request: express.Request, response: express.Response) => {
   response.send('delivery service');
 });
 
-app.listen(portHost);
+const port = config.HOST ;
 
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
