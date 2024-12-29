@@ -1,0 +1,14 @@
+{
+  "user": "",
+  "port":"",
+  "password": "",
+  "server": "",
+  "database": "",
+  "options": {
+    "trustedConnection": true,
+    "encrypt": false,
+    "enableArithAbort": true,
+    "trustServerCertificate": true
+  },
+  "HOST" : 5000
+}
