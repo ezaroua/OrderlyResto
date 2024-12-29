@@ -9,6 +9,7 @@
 ./delivery_service/api/dist
 ./delivery_service/api/node_modules
 ./delivery_service/api/.env
+./delivery_service/dist
 node_modules
 
 user_service/api/config.json
@@ -23,3 +24,5 @@ restaurant_service/api/config.json
 restaurant_service/api/package-lock.json
 restaurant_service/api/dist
 restaurant_service/api/node_modules
+/delivery_service/api/dist/
+gateway_service/api/dist
