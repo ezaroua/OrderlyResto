@@ -72,4 +72,32 @@ const createOrder = async (request: express.Request, response: express.Response)
     }
 };
 
-export{getOrder,getAllOrder,createOrder};
+const updateOrder = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        const id = request.params.id
+console.log(1)
+        const result = await axios({
+            method: 'put',
+            url: `http://localhost:5003/orders/${id}`,
+            headers: {'api-key': `${process.env.API_KEY}`},
+            data : {
+                client_id:request.body.client_id,
+                shop_id:request.body.shop_id,
+                status:request.body.status,
+                delivery_id:request.body.delivery_id,
+                total_amount:request.body.total_amount,
+                client_note:request.body.client_note,
+                items:request.body.items
+            }
+        });
+        console.log(2)
+        /**Renvoyer une réponse de succès*/
+        response.status(200).json(result.data.order_id);
+
+    } catch (error) {
+        /**Renvoyer une réponse  d'echec*/
+        response.status(500).json({message: 'Erreur serveur', error});
+    }
+};
+
+export{getOrder,getAllOrder,createOrder,updateOrder};
