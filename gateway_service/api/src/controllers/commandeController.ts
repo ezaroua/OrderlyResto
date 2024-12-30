@@ -102,7 +102,7 @@ const ratingOrder = async (request: express.Request, response: express.Response)
         const deliveryId = request.body.delivery_id
         const ratingDelivery = request.body.rating_delivery
         const ratingShop = request.body.rating_shop
-console.log(1)
+
 
         if (ratingDelivery != null) {
             const resultDelivery = await axios({
@@ -115,7 +115,7 @@ console.log(1)
                 }
             });
         }
-        console.log(2)
+
         if (ratingShop != null) {
             const resultRestaurant = await axios({
                 method: 'put',
@@ -127,7 +127,7 @@ console.log(1)
                 }
             });
         }
-        console.log(3)
+
         /**Renvoyer une réponse de succès*/
         response.status(200).json({message:"Avis prise en compte !"});
 
