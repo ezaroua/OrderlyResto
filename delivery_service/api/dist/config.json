@@ -3,7 +3,7 @@
     "password": "",
     "server": "localhost",
     "port": "3306",
-    "database": "dbdelivery",
+    "database": "service_delivery",
     "options": {
         "trustedConnection": false,
         "encrypt": false,

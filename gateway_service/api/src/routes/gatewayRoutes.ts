@@ -2,7 +2,7 @@ import express from 'express';
 import {userConnexion, userCreate, userDelete, userUpdate} from "../controllers/utilisateurController";
 import {checkTokenValid} from "../middleWares/auth-middlewares";
 import {getAllRestaurant, getRestaurant} from "../controllers/restaurantController";
-import {getAllOrder, getOrder} from "../controllers/livraisonController";
+import {createOrder, getAllOrder, getOrder} from "../controllers/commandeController";
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ router.get('/shop/:id',checkTokenValid,getRestaurant)
 
 
 /**Routes pour les commandes*/
-router.get('/orders',checkTokenValid,getAllOrder)
+router.get('/orders/all',checkTokenValid,getAllOrder)
 router.get('/orders/:id',checkTokenValid,getOrder)
-
+router.post('/orders',checkTokenValid,createOrder)
 export default router;

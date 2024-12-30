@@ -44,12 +44,12 @@ const productGetOne = async (request: express.Request, response: express.Respons
 const productGetAll = async (request: express.Request, response: express.Response):Promise<void> => {
     try {
         let products : ProductInterface[] = [];
-
+        const shopId=request.params.id;
         /** Obtenir une connexion à partir du pool*/
         const connection = await pool.getConnection();
 
         /** Exécuter une requête SQL*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM product');
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM product WHERE id_shop=?',[shopId]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -57,6 +57,7 @@ const productGetAll = async (request: express.Request, response: express.Respons
         /** Renvoyer une reponse not found*/
         if (rows.length === 0) {
             response.status(404).json({ message: 'Aucun produit trouvé' });
+
         }else {
 
             /**Traitement des donnees de retour de la requete*/
@@ -66,6 +67,7 @@ const productGetAll = async (request: express.Request, response: express.Respons
             }
             /**Renvoyer une réponse de succès*/
             response.status(200).json(products);
+
         }
     } catch (error) {
         /**Renvoyer une réponse  d'echec*/

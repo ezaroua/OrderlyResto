@@ -3,6 +3,7 @@ import {UserInterface, rowToUserInterface} from "../models/utilisateurModel";
 import {RowDataPacket} from "mysql2/promise";
 import express from 'express';
 import axios from "axios";
+import {rowToShopInterface} from "../models/shopModel";
 
 /**Liste de toutes les restaurants*/
 const getAllRestaurant = async (request: express.Request, response: express.Response): Promise<void> => {
@@ -15,7 +16,7 @@ const getAllRestaurant = async (request: express.Request, response: express.Resp
         });
 
         /**Renvoyer une réponse de succès*/
-        response.status(200).json({body: result.data});
+        response.status(200).json(result.data);
 
     } catch (error) {
         /**Renvoyer une réponse  d'echec*/
@@ -26,16 +27,25 @@ const getAllRestaurant = async (request: express.Request, response: express.Resp
 const getRestaurant = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         const id = request.params.id
-        const result = await axios({
+
+        const restaurantGet = await axios({
             method: 'get',
             url: `http://localhost:5004/shop/${id}`,
             headers: {'api-key': `${process.env.API_KEY}`}
         });
+        let restaurant = rowToShopInterface(restaurantGet.data)
+
+        const itemsGet = await axios({
+            method: 'get',
+            url: `http://localhost:5004/product/shop/${id}`,
+            headers: {'api-key': `${process.env.API_KEY}`}
+        });
+        restaurant.items = itemsGet.data
 
         /**Renvoyer une réponse de succès*/
-        response.status(200).json({body: result.data});
-
-    } catch (error) {
+        response.status(200).json(restaurant);
+    } catch
+        (error) {
         /**Renvoyer une réponse  d'echec*/
         response.status(500).json({message: 'Erreur serveur', error});
     }

@@ -3,7 +3,7 @@
     "password": "",               
     "server": "localhost",        
     "port": "3306",               
-    "database": "service_users",  
+    "database": "service_user",
     "options": {
       "trustedConnection": false, 
       "encrypt": false,          

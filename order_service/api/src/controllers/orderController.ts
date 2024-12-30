@@ -4,7 +4,7 @@ import {ResultSetHeader, RowDataPacket} from "mysql2/promise";
 import express from 'express';
 
 /**Recherche d'une commande*/
-const orderGetOne = async (request: express.Request, response: express.Response):Promise<void> => {
+const orderGetOne = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /**Creer une connexion avec la base de données SQL*/
         const connection = await pool.getConnection();
@@ -21,11 +21,11 @@ const orderGetOne = async (request: express.Request, response: express.Response)
         if (rows.length === 0) {
             /** Renvoyer une reponse not found*/
             response.status(404).json({message: 'Commande non trouvée'});
-        }else {
+        } else {
             /**Renvoyer une réponse de succès*/
             const formatted_order = {...rows[0], items: JSON.parse(rows[0]?.items)};
             const order = rowToOrderInterface(formatted_order);
-            
+
             response.status(200).json(order);
         }
 
@@ -36,26 +36,40 @@ const orderGetOne = async (request: express.Request, response: express.Response)
 };
 
 /**Liste de tous les commandes*/
-const orderGetAll = async (request: express.Request, response: express.Response):Promise<void> => {
+const orderGetAll = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        let orders : OrderInterface[] = [];
+        let orders: OrderInterface[] = [];
+        let result : any;
+        const id = request.query.id;
+        const roleId = request.query.roleId;
 
         /** Obtenir une connexion à partir du pool*/
         const connection = await pool.getConnection();
 
-        /** Exécuter une requête SQL*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order`');
-
+        switch (roleId) {
+            case '1' :
+                /** Exécuter une requête SQL*/
+                [result] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE shop_id=?',[id]);
+                break
+            case '2':
+                /** Exécuter une requête SQL*/
+                [result] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE client_id=?',[id]);
+                break
+            case '3':
+                /** Exécuter une requête SQL*/
+                [result] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE delivery_id=?',[id]);
+                break
+        }
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
 
         /** Renvoyer une reponse not found*/
-        if (rows.length === 0) {
-            response.status(404).json({ message: 'Aucune commande trouvée' });
-        }else {
+        if (result.length === 0) {
+            response.status(404).json({message: 'Aucune commande trouvée'});
+        } else {
             /**Traitement des donnees de retour de la requete*/
-            for (let i = 0; i < rows.length; i++) {
-                const formatted_order = {...rows[i], items: JSON.parse(rows[i]?.items)};
+            for (let i = 0; i < result.length; i++) {
+                const formatted_order = {...result[i], items: JSON.parse(result[i]?.items)};
                 let order = rowToOrderInterface(formatted_order);
                 orders.push(order);
             }
@@ -64,15 +78,17 @@ const orderGetAll = async (request: express.Request, response: express.Response)
         }
     } catch (error) {
         /**Renvoyer une réponse  d'echec*/
-        response.status(500).json({ message: 'Erreur serveur' });
+        response.status(500).json({message: 'Erreur serveur'});
     }
 };
 
 /**Création d'une commande */
 const orderCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
+
+        console.log(request.body)
         /** Récupération des paramètres de la requête */
-        const { shop_id, client_id, delivery_id, total_amount, items, client_note } = request.body;
+        const {shop_id, client_id, delivery_id, total_amount, items, client_note} = request.body;
 
         /** Valider l'objet en le convertissant au format OrderInterface */
         const order: OrderInterface = {
@@ -89,7 +105,7 @@ const orderCreate = async (request: express.Request, response: express.Response)
 
         /** Vérification des paramètres obligatoires */
         if (!shop_id || !client_id || !total_amount || !items) {
-            response.status(400).json({ message: "Tous les champs requis ne sont pas fournis." });
+            response.status(400).json({message: "Tous les champs requis ne sont pas fournis."});
             return;
         }
 
@@ -101,9 +117,9 @@ const orderCreate = async (request: express.Request, response: express.Response)
         connection.release();
 
         /** Retour de la requête */
-        response.status(201).json({ message: "Commande créée avec succès.", order_id: result.insertId });
+        response.status(201).json({message: "Commande créée avec succès.", order_id: result.insertId});
     } catch (error) {
-        response.status(500).json({ message: "Erreur serveur" });
+        response.status(500).json({message: "Erreur serveur"});
     }
 };
 
@@ -111,13 +127,13 @@ const orderCreate = async (request: express.Request, response: express.Response)
 const orderUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** ID de la commande à modifier */
-        const { id } = request.params;
+        const {id} = request.params;
         /** Récupération des paramètres de la requête */
-        const { delivery_id, status, total_amount, items, client_note } = request.body;
+        const {delivery_id, status, total_amount, items, client_note} = request.body;
 
         /** Vérification des paramètres obligatoires */
         if (!delivery_id || !status || !total_amount || !items || !client_note) {
-            response.status(400).json({ message: "Tous les champs requis ne sont pas fournis." });
+            response.status(400).json({message: "Tous les champs requis ne sont pas fournis."});
             return;
         }
 
@@ -145,12 +161,12 @@ const orderUpdate = async (request: express.Request, response: express.Response)
 
         /** Retour en fonction d'une modif ou non */
         if (result.affectedRows === 0) {
-            response.status(404).json({ message: "Commande non trouvée." });
+            response.status(404).json({message: "Commande non trouvée."});
         } else {
-            response.status(200).json({ message: "Commande mise à jour avec succès." });
+            response.status(200).json({message: "Commande mise à jour avec succès."});
         }
     } catch (error) {
-        response.status(500).json({ message: "Erreur serveur" });
+        response.status(500).json({message: "Erreur serveur"});
     }
 };
 
@@ -165,7 +181,7 @@ const orderPatch = async (request: express.Request, response: express.Response):
 
         /** Vérifier si des données sont fournies */
         if (Object.keys(updates).length === 0) {
-            response.status(400).json({ message: 'Aucune donnée à mettre à jour.' });
+            response.status(400).json({message: 'Aucune donnée à mettre à jour.'});
             return;
         }
 
@@ -178,19 +194,21 @@ const orderPatch = async (request: express.Request, response: express.Response):
 
         /** Modification en BDD si l'id indiqué existe */
         const [result] = await connection.execute<ResultSetHeader>(
-            `UPDATE \`order\` SET ${fields} WHERE order_id = ?`,
+            `UPDATE \`order\`
+             SET ${fields}
+             WHERE order_id = ?`,
             values
         );
         connection.release();
 
         /** Retour en fonction d'une modif ou non */
         if (result.affectedRows === 0) {
-            response.status(404).json({ message: 'Commande non trouvée.' });
+            response.status(404).json({message: 'Commande non trouvée.'});
         } else {
-            response.status(200).json({ message: 'Commande mise à jour partiellement avec succès.' });
+            response.status(200).json({message: 'Commande mise à jour partiellement avec succès.'});
         }
     } catch (error) {
-        response.status(500).json({ message: 'Erreur lors de la mise à jour partielle de la commande.' });
+        response.status(500).json({message: 'Erreur lors de la mise à jour partielle de la commande.'});
     }
 };
 
@@ -198,7 +216,7 @@ const orderPatch = async (request: express.Request, response: express.Response):
 const orderDelete = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** ID de la commande à supprimer */
-        const { id } = request.params;
+        const {id} = request.params;
 
         /** Suppression en BDD */
         const connection = await pool.getConnection();
@@ -207,12 +225,12 @@ const orderDelete = async (request: express.Request, response: express.Response)
 
         /** Retour en fonction d'une suppression ou non */
         if (result.affectedRows === 0) {
-            response.status(404).json({ message: "Commande non trouvée." });
+            response.status(404).json({message: "Commande non trouvée."});
         } else {
-            response.status(200).json({ message: "Commande supprimée avec succès." });
+            response.status(200).json({message: "Commande supprimée avec succès."});
         }
     } catch (error) {
-        response.status(500).json({ message: "Erreur serveur" });
+        response.status(500).json({message: "Erreur serveur"});
     }
 };
 
