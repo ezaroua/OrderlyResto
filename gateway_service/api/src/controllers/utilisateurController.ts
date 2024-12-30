@@ -1,9 +1,6 @@
-import {pool} from '../../connectionDb'
-import {UserInterface, rowToUserInterface} from "../models/utilisateurModel";
-import {RowDataPacket} from "mysql2/promise";
 import express from 'express';
 import dotenv from 'dotenv'
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios from 'axios';
 import {sign} from "jsonwebtoken";
 
 dotenv.config()
@@ -225,7 +222,7 @@ const userConnexion = async (request: express.Request, response: express.Respons
             }
 
             /**Si les mots de passes correspondent alors on genere un token pour une session de 1 heure*/
-            const expiration = Math.floor(Date.now() / 1000) + (60 * 60);
+            const expiration = Math.floor(Date.now() / 1000) + (60 * 3600);
             const payload = {
                 user_email: email,
                 role_id: result.data.user.role_id,

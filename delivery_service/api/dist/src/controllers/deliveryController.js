@@ -76,13 +76,13 @@ const rateDelivery = (request, response) => __awaiter(void 0, void 0, void 0, fu
         const data = request.body;
         const validRating = [0, 1, 2, 3, 4, 5];
         //Validation simple de la data
-        if (!(!data || typeof data !== 'object' || !validRating.includes(data['rating']) || !Number.isInteger(data['rating']) || !Number.isInteger(data['id_user']))) {
+        if (!(!data || typeof data !== 'object' || !validRating.includes(data['rating']) || !Number.isInteger(data['rating']) || !Number.isInteger(data['delivery_id']))) {
             /**Creer une connexion avec la base de données SQL*/
             const connection = yield connectionDb_1.pool.getConnection();
             /**Recuperation des données dans les parametres de la requete*/
             const id = request.params.id;
             /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+            const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_delivery_user = ?', [id]);
             console.log(rows);
             const user_id = rows[0]['id_user'];
             const rating = rows[0]['rating'];
@@ -91,7 +91,7 @@ const rateDelivery = (request, response) => __awaiter(void 0, void 0, void 0, fu
             const new_rating = ((rating * d_count) + data['rating']) / new_d_count;
             yield connection.execute('UPDATE t_delivery SET rating = ?, rating_count = ? WHERE id_user = ?', [new_rating, new_d_count, user_id]);
             /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [test] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+            const [test] = yield connection.execute('SELECT * FROM t_delivery WHERE id_delivery_user = ?', [id]);
             console.log(test);
             /**Fermeture de la connexion avec la base de données SQL*/
             connection.release();

@@ -1,11 +1,7 @@
-import {pool} from '../../connectionDb'
-import {UserInterface, rowToUserInterface} from "../models/utilisateurModel";
-import {RowDataPacket} from "mysql2/promise";
 import express from 'express';
 import axios from "axios";
-import {verify} from "jsonwebtoken";
 
-/**Liste de toutes les restaurants*/
+/**Liste de toutes les commandes*/
 const getAllOrder = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
 
@@ -53,13 +49,13 @@ const createOrder = async (request: express.Request, response: express.Response)
             method: 'post',
             url: `http://localhost:5003/orders`,
             headers: {'api-key': `${process.env.API_KEY}`},
-            data : {
-                client_id:request.body.client_id,
-                shop_id:request.body.shop_id,
-                delivery_id:request.body.delivery_id,
-                total_amount:request.body.total_amount,
-                client_note:request.body.client_note,
-                items:request.body.items
+            data: {
+                client_id: request.body.client_id,
+                shop_id: request.body.shop_id,
+                delivery_id: request.body.delivery_id,
+                total_amount: request.body.total_amount,
+                client_note: request.body.client_note,
+                items: request.body.items
             }
         });
 
@@ -75,22 +71,22 @@ const createOrder = async (request: express.Request, response: express.Response)
 const updateOrder = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         const id = request.params.id
-console.log(1)
+
         const result = await axios({
             method: 'put',
             url: `http://localhost:5003/orders/${id}`,
             headers: {'api-key': `${process.env.API_KEY}`},
-            data : {
-                client_id:request.body.client_id,
-                shop_id:request.body.shop_id,
-                status:request.body.status,
-                delivery_id:request.body.delivery_id,
-                total_amount:request.body.total_amount,
-                client_note:request.body.client_note,
-                items:request.body.items
+            data: {
+                client_id: request.body.client_id,
+                shop_id: request.body.shop_id,
+                status: request.body.status,
+                delivery_id: request.body.delivery_id,
+                total_amount: request.body.total_amount,
+                client_note: request.body.client_note,
+                items: request.body.items
             }
         });
-        console.log(2)
+
         /**Renvoyer une réponse de succès*/
         response.status(200).json(result.data.order_id);
 
@@ -100,4 +96,45 @@ console.log(1)
     }
 };
 
-export{getOrder,getAllOrder,createOrder,updateOrder};
+const ratingOrder = async (request: express.Request, response: express.Response): Promise<void> => {
+    try {
+        const shopId = request.body.shop_id
+        const deliveryId = request.body.delivery_id
+        const ratingDelivery = request.body.rating_delivery
+        const ratingShop = request.body.rating_shop
+console.log(1)
+
+        if (ratingDelivery != null) {
+            const resultDelivery = await axios({
+                method: 'put',
+                url: `http://localhost:5005/rating/${deliveryId}`,
+                headers: {'api-key': `${process.env.API_KEY}`},
+                data: {
+                    delivery_id:deliveryId,
+                    rating: ratingDelivery
+                }
+            });
+        }
+        console.log(2)
+        if (ratingShop != null) {
+            const resultRestaurant = await axios({
+                method: 'put',
+                url: `http://localhost:5004/shop/rate/${shopId}`,
+                headers: {'api-key': `${process.env.API_KEY}`},
+                data: {
+                    shop_id:shopId,
+                    rating: ratingShop
+                }
+            });
+        }
+        console.log(3)
+        /**Renvoyer une réponse de succès*/
+        response.status(200).json({message:"Avis prise en compte !"});
+
+    } catch (error) {
+        /**Renvoyer une réponse  d'echec*/
+        response.status(500).json({message: 'Erreur serveur', error});
+    }
+};
+
+export {getOrder, getAllOrder, createOrder, updateOrder,ratingOrder};

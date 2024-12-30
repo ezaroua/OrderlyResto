@@ -76,7 +76,7 @@ const rateDelivery = async (request: express.Request, response: express.Response
         const validRating = [0, 1, 2, 3, 4, 5];
 
         //Validation simple de la data
-        if (!(!data || typeof data !== 'object' || !validRating.includes(data['rating']) || !Number.isInteger(data['rating']) || !Number.isInteger(data['id_user']))) {
+        if (!(!data || typeof data !== 'object' || !validRating.includes(data['rating']) || !Number.isInteger(data['rating']) || !Number.isInteger(data['delivery_id']))) {
 
 
             /**Creer une connexion avec la base de données SQL*/
@@ -86,7 +86,7 @@ const rateDelivery = async (request: express.Request, response: express.Response
             const id = request.params.id;
 
             /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+            const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_delivery_user = ?', [id]);
 
             console.log(rows);
             const user_id = rows[0]['id_user']
@@ -98,7 +98,7 @@ const rateDelivery = async (request: express.Request, response: express.Response
             await connection.execute<RowDataPacket[]>('UPDATE t_delivery SET rating = ?, rating_count = ? WHERE id_user = ?', [new_rating, new_d_count, user_id]);
 
             /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [test] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+            const [test] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_delivery_user = ?', [id]);
             console.log(test)
 
             /**Fermeture de la connexion avec la base de données SQL*/

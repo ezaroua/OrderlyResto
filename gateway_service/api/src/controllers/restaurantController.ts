@@ -1,6 +1,3 @@
-import {pool} from '../../connectionDb'
-import {UserInterface, rowToUserInterface} from "../models/utilisateurModel";
-import {RowDataPacket} from "mysql2/promise";
 import express from 'express';
 import axios from "axios";
 import {rowToShopInterface} from "../models/shopModel";
