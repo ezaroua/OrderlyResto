@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: white;
+  }
+  
+  .login-wrapper {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .create-account-btn {
+    color: #06C167;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .welcome-text {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid #EEEEEE;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #EEEEEE;
+  }
+  
+  .divider span {
+    padding: 0 10px;
+    color: #666666;
+  }
+  
+  .social-btn {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 2px solid #EEEEEE;
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
