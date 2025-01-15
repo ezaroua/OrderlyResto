@@ -89,6 +89,10 @@ const orderCreate = async (request: express.Request, response: express.Response)
 
         /** Vérification des paramètres obligatoires */
         if (!id_shop || !id_client || !total_amount || !items) {
+            response.status(400).json({message: "Tous les champs requis ne sont pas fournis."});
+            return ;
+        }
+        if (!id_shop || !id_client || !total_amount || !items) {
             response.status(400).json({ message: "Tous les champs requis ne sont pas fournis." });
             return;
         }
@@ -103,15 +107,16 @@ const orderCreate = async (request: express.Request, response: express.Response)
         /** Retour de la requête */
         response.status(201).json({ message: "Commande créée avec succès.", id_order: result.insertId });
     } catch (error) {
-        response.status(500).json({ message: "Erreur serveur" });
+        response.status(500).json({message: "Erreur serveur"});
     }
 };
+
 
 /**Mise à jour d'une commande */
 const orderUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** ID de la commande à modifier */
-        const { id } = request.params;
+        const {id} = request.params;
         /** Récupération des paramètres de la requête */
         const { id_delivery_user, status, total_amount, items, client_note } = request.body;
 

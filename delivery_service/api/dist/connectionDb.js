@@ -5,16 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pool = void 0;
 const promise_1 = __importDefault(require("mysql2/promise"));
-require('dotenv').config();
+const config = require('./config');
 const pool = promise_1.default.createPool({
-    host: process.env.HOST,
-    user: process.env.USER,
-    password: process.env.PWD,
-    database: process.env.DATABASE,
+    host: config.server,
+    user: config.user,
+    password: config.password,
+    database: config.database,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : undefined
+    port: config.port
 });
 exports.pool = pool;
 //# sourceMappingURL=connectionDb.js.map

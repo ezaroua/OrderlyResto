@@ -7,16 +7,18 @@ import {
     clientPatch, 
     clientDelete 
 } from "../controllers/clientController";
+import {checkApiKey} from "../../middleWares/authMiddleWare";
+
 const router = express.Router();
 
 /**
  * Routes d'accès aux utilisateurs
  */
-router.get('/clients/:id', clientGetOne);
-router.get('/clients/', clientGetAll);
-router.post('/clients/', clientCreate);
-router.put('/clients/:id', clientUpdate);
-router.patch('/clients/:id', clientPatch);
-router.delete('/clients/:id', clientDelete);
+router.get('/clients/:id',checkApiKey, clientGetOne);
+router.get('/clients/',checkApiKey, clientGetAll);
+router.post('/clients/',checkApiKey, clientCreate);
+router.put('/clients/:id',checkApiKey, clientUpdate);
+router.patch('/clients/:id',checkApiKey, clientPatch);
+router.delete('/clients/:id',checkApiKey, clientDelete);
 
 export default router;

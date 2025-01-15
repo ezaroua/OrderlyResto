@@ -3,12 +3,12 @@
     "password": "",
     "server": "localhost",
     "port": "3306",
-    "database": "service_users",
+    "database": "service_user",
     "options": {
         "trustedConnection": false,
         "encrypt": false,
         "enableArithAbort": true,
         "trustServerCertificate": false
     },
-    "HOST": 5001
+    "HOST": 5002
 }

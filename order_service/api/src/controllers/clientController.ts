@@ -13,7 +13,7 @@ const clientGetOne = async (request: express.Request, response: express.Response
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un client*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE id_client = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE id_user = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -74,8 +74,8 @@ const clientGetAll = async (request: express.Request, response: express.Response
 const clientCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** Récupération des paramètres de la requête */
-        const { firstname, lastname, phone, address, city, postal_code, id_user } = request.body;
-
+        const { phone, address, city, postal_code, id_user ,firstname , lastname} = request.body;
+console.log(request.body)
         /** Valider l'objet en le convertissant au format ClientInterface */
         const client: ClientInterface = {
             id_client: 0, // Auto-incrémenté par la BDD
@@ -97,8 +97,8 @@ const clientCreate = async (request: express.Request, response: express.Response
         /** Insertion en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'INSERT INTO client (phone, address, city, postal_code, id_user) VALUES (?, ?, ?, ?, ?)',
-            [client.phone, client.address, client.city, client.postal_code, client.id_user]
+            'INSERT INTO client (phone, address, city, postal_code, id_user, firstname , lastname) VALUES (?, ?, ?, ?, ? ,? ,? )',
+            [client.phone, client.address, client.city, client.postal_code, client.id_user, client.firstname ,client.lastname]
         );
         connection.release();
 
@@ -115,10 +115,10 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** ID du client à modifier */
         const id = request.params.id;
         /** Récupération des paramètres de la requête */
-        const { firstname, lastname, phone, address, city, postal_code } = request.body;
+        const { phone, address, city, postal_code , firstname , lastname} = request.body;
 
         /** Vérification des paramètres obligatoires */
-        if (!firstname || !lastname || !phone || !address || !city || !postal_code) {
+        if (!phone || !address || !city || !postal_code) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -126,22 +126,22 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** Valider l'objet en le convertissant au format OrderInterface */
         /** Partiel parce que pas besoin de pouvoir tout modifier : */
         /**
-         * id_user : on ne change pas le user : autant changer de client
+         * user_id : on ne change pas le user : autant changer de client
          */
         const client: Partial<ClientInterface> = {
-            firstname,
-            lastname,
             phone,
             address,
             city,
             postal_code,
+            firstname,
+            lastname
         };
 
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE client SET firstname = ?, lastname = ?, phone = ?, address = ?, city = ?, postal_code = ? WHERE id_client = ?',
-            [client.firstname, client.lastname, client.phone, client.address, client.city, client.postal_code, id]
+            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? , firstname = ? , lastname = ? WHERE id_client = ?',
+            [client.phone, client.address, client.city, client.postal_code, client.firstname , client.lastname , id]
         );
         connection.release();
 

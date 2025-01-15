@@ -1,6 +1,6 @@
-import { pool } from '../../connectionDb';
-import { UserInterface, rowToUserInterface, UserVerificationStatus } from "../models/userModel";
-import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
+import {pool} from '../../connectionDb';
+import {UserInterface, rowToUserInterface, UserVerificationStatus} from "../models/userModel";
+import {RowDataPacket, ResultSetHeader} from "mysql2/promise";
 import express from 'express';
 import bcrypt from 'bcrypt';
 
@@ -9,12 +9,11 @@ const SALT_ROUNDS = 10; // Nombre de rounds pour le hashage
 /** Création d'un utilisateur */
 const userCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        console.log('Request body:', request.body);
 
-        const { email, password, role_id } = request.body;
+        const {email, password, role_id} = request.body;
 
         if (!email || !password || !role_id) {
-            response.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis.' });
+            response.status(400).json({message: 'Tous les champs obligatoires doivent être remplis.'});
             return;
         }
 
@@ -28,7 +27,7 @@ const userCreate = async (request: express.Request, response: express.Response):
 
         if (existingUsers.length > 0) {
             connection.release();
-            response.status(400).json({ message: 'Cette adresse email est déjà utilisée.' });
+            response.status(400).json({message: 'Cette adresse email est déjà utilisée.'});
             return;
         }
 
@@ -43,16 +42,16 @@ const userCreate = async (request: express.Request, response: express.Response):
         connection.release();
 
         if (result.affectedRows > 0) {
-            response.status(201).json({ message: 'Utilisateur créé avec succès', userId: result.insertId });
+            response.status(201).json({message: 'Utilisateur créé avec succès', user_id: result.insertId});
         } else {
-            response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.' });
+            response.status(500).json({message: 'Erreur lors de la création de l\'utilisateur.'});
         }
     } catch (error) {
         console.error('Error in userCreate:', error);
         if (error instanceof Error) {
-            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+            response.status(500).json({message: 'Erreur serveur', error: error.message});
         } else {
-            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+            response.status(500).json({message: 'Erreur serveur', error: 'Erreur inconnue'});
         }
     }
 };
@@ -61,10 +60,10 @@ const userCreate = async (request: express.Request, response: express.Response):
 const userUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         const user_id = request.params.id;
-        const { email, password, role_id } = request.body;
+        const {email, password, role_id} = request.body;
 
         if (!email || !role_id) {
-            response.status(400).json({ message: 'Email et role_id sont obligatoires.' });
+            response.status(400).json({message: 'Email et role_id sont obligatoires.'});
             return;
         }
 
@@ -78,7 +77,7 @@ const userUpdate = async (request: express.Request, response: express.Response):
 
         if (existingUserRows.length === 0) {
             connection.release();
-            response.status(404).json({ message: 'Utilisateur non trouvé' });
+            response.status(404).json({message: 'Utilisateur non trouvé'});
             return;
         }
 
@@ -90,7 +89,7 @@ const userUpdate = async (request: express.Request, response: express.Response):
 
         if (existingEmailRows.length > 0) {
             connection.release();
-            response.status(400).json({ message: 'Cette adresse email est déjà utilisée par un autre utilisateur.' });
+            response.status(400).json({message: 'Cette adresse email est déjà utilisée par un autre utilisateur.'});
             return;
         }
 
@@ -112,16 +111,16 @@ const userUpdate = async (request: express.Request, response: express.Response):
         connection.release();
 
         if (result.affectedRows > 0) {
-            response.status(200).json({ message: 'Utilisateur mis à jour avec succès' });
+            response.status(200).json({message: 'Utilisateur mis à jour avec succès'});
         } else {
-            response.status(500).json({ message: 'Erreur lors de la mise à jour de l\'utilisateur' });
+            response.status(500).json({message: 'Erreur lors de la mise à jour de l\'utilisateur'});
         }
     } catch (error) {
         console.error('Error in userUpdate:', error);
         if (error instanceof Error) {
-            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+            response.status(500).json({message: 'Erreur serveur', error: error.message});
         } else {
-            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+            response.status(500).json({message: 'Erreur serveur', error: 'Erreur inconnue'});
         }
     }
 };
@@ -139,15 +138,17 @@ const userGetOne = async (request: express.Request, response: express.Response):
         const id = request.params.id;
 
         const [rows] = await connection.execute<RowDataPacket[]>(
-            `SELECT users.*, roles.name AS role_name FROM users
-             LEFT JOIN roles ON users.role_id = roles.id WHERE users.id = ?`,
+            `SELECT users.*, roles.name AS role_name
+             FROM users
+                      LEFT JOIN roles ON users.role_id = roles.id
+             WHERE users.user_id = ?`,
             [id]
         );
 
         connection.release();
 
         if (rows.length === 0) {
-            response.status(404).json({ message: 'Utilisateur non trouvé' });
+            response.status(404).json({message: 'Utilisateur non trouvé'});
         } else {
             const user = rowToUserInterface(rows[0]);
             response.status(200).json(user);
@@ -155,9 +156,9 @@ const userGetOne = async (request: express.Request, response: express.Response):
     } catch (error) {
         console.error('Error in userGetOne:', error);
         if (error instanceof Error) {
-            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+            response.status(500).json({message: 'Erreur serveur', error: error.message});
         } else {
-            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+            response.status(500).json({message: 'Erreur serveur', error: 'Erreur inconnue'});
         }
     }
 };
@@ -168,14 +169,15 @@ const userGetAll = async (request: express.Request, response: express.Response):
         const connection = await pool.getConnection();
 
         const [rows] = await connection.execute<RowDataPacket[]>(
-            `SELECT users.*, roles.name AS role_name FROM users
-             LEFT JOIN roles ON users.role_id = roles.id`
+            `SELECT users.*, roles.name AS role_name
+             FROM users
+                      LEFT JOIN roles ON users.role_id = roles.id`
         );
 
         connection.release();
 
         if (rows.length === 0) {
-            response.status(404).json({ message: 'Aucun utilisateur trouvé' });
+            response.status(404).json({message: 'Aucun utilisateur trouvé'});
         } else {
             const users: UserInterface[] = rows.map(row => rowToUserInterface(row));
             response.status(200).json(users);
@@ -183,14 +185,12 @@ const userGetAll = async (request: express.Request, response: express.Response):
     } catch (error) {
         console.error('Error in userGetAll:', error);
         if (error instanceof Error) {
-            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+            response.status(500).json({message: 'Erreur serveur', error: error.message});
         } else {
-            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+            response.status(500).json({message: 'Erreur serveur', error: 'Erreur inconnue'});
         }
     }
 };
-
-
 
 
 /** Suppression d'un utilisateur */
@@ -208,7 +208,7 @@ const userDelete = async (request: express.Request, response: express.Response):
 
         if (existingUserRows.length === 0) {
             connection.release();
-            response.status(404).json({ message: 'Utilisateur non trouvé' });
+            response.status(404).json({message: 'Utilisateur non trouvé'});
             return;
         }
 
@@ -221,80 +221,63 @@ const userDelete = async (request: express.Request, response: express.Response):
         connection.release();
 
         if (result.affectedRows > 0) {
-            response.status(200).json({ message: 'Utilisateur supprimé avec succès' });
+            response.status(200).json({message: 'Utilisateur supprimé avec succès'});
         } else {
-            response.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur' });
+            response.status(500).json({message: 'Erreur lors de la suppression de l\'utilisateur'});
         }
     } catch (error) {
         console.error('Error in userDelete:', error);
         if (error instanceof Error) {
-            response.status(500).json({ message: 'Erreur serveur', error: error.message });
+            response.status(500).json({message: 'Erreur serveur', error: error.message});
         } else {
-            response.status(500).json({ message: 'Erreur serveur', error: 'Erreur inconnue' });
+            response.status(500).json({message: 'Erreur serveur', error: 'Erreur inconnue'});
         }
     }
 };
 
 
-/** 
+/**
  * Vérifie l'existence d'un utilisateur et la validité de son mot de passe
  */
-const verifyUser = async (email: string, password: string): Promise<{ 
-    status: UserVerificationStatus; 
-    user?: UserInterface;
-    message: string;
-}> => {
+const verifyUser = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
+        const email = request.body.email
+        const password = request.body.password
         if (!email || !password) {
-            return {
-                status: UserVerificationStatus.INVALID_INPUT,
-                message: "Email et mot de passe requis"
-            };
+            response.status(403).json({message: 'Email et mot de passe requis'});
+            message: "Email et mot de passe requis"
+        } else {
+
+            const connection = await pool.getConnection();
+
+            const [rows] = await connection.execute<RowDataPacket[]>(
+                `SELECT users.*, roles.name AS role_name
+                 FROM users
+                          LEFT JOIN roles ON users.role_id = roles.id
+                 WHERE users.email = ?`,
+                [email]);
+
+            connection.release();
+
+            if (rows.length === 0) {
+                response.status(404).json({message: 'Utilisateur introuvable'});
+            } else {
+
+                const user = rowToUserInterface(rows[0]);
+                const passwordMatch = await verifyPassword(password, user.password);
+
+                if (!passwordMatch) {
+                    response.status(401).json({message: 'Mot de passe incorrect'});
+                } else {
+                    response.status(200).json({message: 'Authentification réussi', user});
+                }
+            }
         }
-
-        const connection = await pool.getConnection();
-
-        const [rows] = await connection.execute<RowDataPacket[]>(
-            `SELECT users.*, roles.name AS role_name 
-             FROM users 
-             LEFT JOIN roles ON users.role_id = roles.id 
-             WHERE users.email = ?`,
-            [email]
-        );
-
-        connection.release();
-
-        if (rows.length === 0) {
-            return {
-                status: UserVerificationStatus.INVALID_EMAIL,
-                message: "Email non trouvé"
-            };
-        }
-
-        const user = rows[0];
-
-        const passwordMatch = await verifyPassword(password, user.password);
-
-        if (!passwordMatch) {
-            return {
-                status: UserVerificationStatus.INVALID_PASSWORD,
-                message: "Mot de passe incorrect"
-            };
-        }
-
-        return {
-            status: UserVerificationStatus.SUCCESS,
-            user: rowToUserInterface(user),
-            message: "Authentification réussie"
-        };
-
-    } catch (error) {
-        console.error('Error in verifyUser:', error);
-        return {
-            status: UserVerificationStatus.SERVER_ERROR,
-            message: error instanceof Error ? error.message : "Erreur serveur inconnue"
-        };
+    } catch
+        (error) {
+        console.log(error);
+        response.status(500).json({message: 'Erreur serveur', error: error});
     }
-};
+}
 
-export { userGetOne, userGetAll, userCreate, userUpdate, userDelete, verifyUser, verifyPassword };
+export {userGetOne, userGetAll, userCreate, userUpdate, userDelete, verifyUser, verifyPassword};

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateDelivery = exports.registerDelivery = exports.rateDelivery = exports.deliveryGetAll = exports.deliveryGetOne = void 0;
+exports.deleteDelivery = exports.updateDelivery = exports.registerDelivery = exports.rateDelivery = exports.deliveryGetAll = exports.deliveryGetOne = void 0;
 const connectionDb_1 = require("../../connectionDb");
 const deliveryModel_1 = require("../models/deliveryModel");
 /**Recherche d'un utilisateur*/
@@ -76,13 +76,13 @@ const rateDelivery = (request, response) => __awaiter(void 0, void 0, void 0, fu
         const data = request.body;
         const validRating = [0, 1, 2, 3, 4, 5];
         //Validation simple de la data
-        if (!(!data || typeof data !== 'object' || !validRating.includes(data['rating']) || !Number.isInteger(data['rating']) || !Number.isInteger(data['id_user']))) {
+        if (!(!data || typeof data !== 'object' || !validRating.includes(data['rating']) || !Number.isInteger(data['rating']) || !Number.isInteger(data['delivery_id']))) {
             /**Creer une connexion avec la base de données SQL*/
             const connection = yield connectionDb_1.pool.getConnection();
             /**Recuperation des données dans les parametres de la requete*/
             const id = request.params.id;
             /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+            const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_delivery_user = ?', [id]);
             console.log(rows);
             const user_id = rows[0]['id_user'];
             const rating = rows[0]['rating'];
@@ -91,7 +91,7 @@ const rateDelivery = (request, response) => __awaiter(void 0, void 0, void 0, fu
             const new_rating = ((rating * d_count) + data['rating']) / new_d_count;
             yield connection.execute('UPDATE t_delivery SET rating = ?, rating_count = ? WHERE id_user = ?', [new_rating, new_d_count, user_id]);
             /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [test] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+            const [test] = yield connection.execute('SELECT * FROM t_delivery WHERE id_delivery_user = ?', [id]);
             console.log(test);
             /**Fermeture de la connexion avec la base de données SQL*/
             connection.release();
@@ -119,36 +119,29 @@ const updateDelivery = (request, response) => __awaiter(void 0, void 0, void 0, 
     try {
         //Extraction des données reçues
         const data = request.body;
-        console.log(data);
         //Validation simple de la data
-        if (!(!data || typeof data !== 'object' || !Number.isInteger(data['id_user']))) {
-            /**Creer une connexion avec la base de données SQL*/
-            const connection = yield connectionDb_1.pool.getConnection();
-            /**Recuperation des données dans les parametres de la requete*/
-            const id = request.params.id;
-            /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
-            const first_name = '\'' + data['first_name'] + '\'';
-            const last_name = '\'' + data['last_name'] + '\'';
-            const vehicle = '\'' + data['vehicle'] + '\'';
-            const user_id = rows[0]['id_user'];
-            yield connection.execute('UPDATE t_delivery SET first_name = ? , last_name = ?, vehicle = ? WHERE id_user = ?', [first_name, last_name, vehicle, user_id]);
-            /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [test] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
-            /**Fermeture de la connexion avec la base de données SQL*/
-            connection.release();
-            if (rows.length === 0) {
-                /** Renvoyer une reponse not found*/
-                response.status(404).json({ message: 'Utilisateur non trouvé' });
-            }
-            else {
-                /**Renvoyer une réponse de succès*/
-                const delivery = (0, deliveryModel_1.rowToDeliveryInterface)(rows[0]);
-                response.status(200).json(delivery);
-            }
+        /**Creer une connexion avec la base de données SQL*/
+        const connection = yield connectionDb_1.pool.getConnection();
+        /**Recuperation des données dans les parametres de la requete*/
+        const id = request.params.id;
+        /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
+        const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+        const first_name = '\'' + data['first_name'] + '\'';
+        const last_name = '\'' + data['last_name'] + '\'';
+        const vehicle = '\'' + data['vehicle'] + '\'';
+        yield connection.execute('UPDATE t_delivery SET first_name = ? , last_name = ?, vehicle = ? WHERE id_user = ?', [first_name, last_name, vehicle, id]);
+        /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
+        const [test] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+        /**Fermeture de la connexion avec la base de données SQL*/
+        connection.release();
+        if (rows.length === 0) {
+            /** Renvoyer une reponse not found*/
+            response.status(404).json({ message: 'Utilisateur non trouvé' });
         }
         else {
-            response.status(400).json({ message: 'Invalid data' });
+            /**Renvoyer une réponse de succès*/
+            const delivery = (0, deliveryModel_1.rowToDeliveryInterface)(rows[0]);
+            response.status(200).json(delivery);
         }
     }
     catch (error) {
@@ -161,38 +154,29 @@ const registerDelivery = (request, response) => __awaiter(void 0, void 0, void 0
     try {
         //Extraction des données reçues
         const data = request.body;
-        //Validation simple de la data
-        if (!(!data || typeof data !== 'object' || !Number.isInteger(data['id_user']))) {
-            /**Creer une connexion avec la base de données SQL*/
-            const connection = yield connectionDb_1.pool.getConnection();
-            /**Recuperation des données dans les parametres de la requete*/
-            const id = data['id_user'];
-            /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            //const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
-            // rajouter une vérif sur l'existence d'un livreur
-            const first_name = '\'' + data['first_name'] + '\'';
-            const last_name = '\'' + data['last_name'] + '\'';
-            const vehicle = '\'' + data['vehicle'] + '\'';
-            console.log(1);
-            yield connection.execute('INSERT INTO t_delivery (id_user, first_name, last_name, vehicle, rating_count, rating) VALUES(?, ?, ?, ?, 0, 0)', [id, first_name, last_name, vehicle]);
-            console.log(2);
-            /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
-            const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
-            console.log(rows);
-            /**Fermeture de la connexion avec la base de données SQL*/
-            connection.release();
-            if (rows.length === 0) {
-                /** Renvoyer une reponse not found*/
-                response.status(404).json({ message: 'Utilisateur non trouvé' });
-            }
-            else {
-                /**Renvoyer une réponse de succès*/
-                const delivery = (0, deliveryModel_1.rowToDeliveryInterface)(rows[0]);
-                response.status(200).json(delivery);
-            }
+        /**Creer une connexion avec la base de données SQL*/
+        const connection = yield connectionDb_1.pool.getConnection();
+        /**Recuperation des données dans les parametres de la requete*/
+        const id = data['user_id'];
+        /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
+        //const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+        // rajouter une vérif sur l'existence d'un livreur
+        const first_name = '\'' + data['first_name'] + '\'';
+        const last_name = '\'' + data['last_name'] + '\'';
+        const vehicle = '\'' + data['vehicle'] + '\'';
+        yield connection.execute('INSERT INTO t_delivery (id_user, first_name, last_name, vehicle, rating_count, rating) VALUES(?, ?, ?, ?, 0, 0)', [id, first_name, last_name, vehicle]);
+        /**Execute une requete sur la base de données SQL pour recuperer un utilisateur livreur*/
+        const [rows] = yield connection.execute('SELECT * FROM t_delivery WHERE id_user = ?', [id]);
+        /**Fermeture de la connexion avec la base de données SQL*/
+        connection.release();
+        if (rows.length === 0) {
+            /** Renvoyer une reponse not found*/
+            response.status(404).json({ message: 'Utilisateur non trouvé' });
         }
         else {
-            response.status(400).json({ message: 'Invalid data' });
+            /**Renvoyer une réponse de succès*/
+            const delivery = (0, deliveryModel_1.rowToDeliveryInterface)(rows[0]);
+            response.status(200).json(delivery);
         }
     }
     catch (error) {
@@ -201,4 +185,26 @@ const registerDelivery = (request, response) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.registerDelivery = registerDelivery;
+/**Suppression d'un client */
+const deleteDelivery = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        /** ID du client à supprimer */
+        const id = request.params.id;
+        /** Suppression en BDD */
+        const connection = yield connectionDb_1.pool.getConnection();
+        const [result] = yield connection.execute('DELETE FROM t_delivery WHERE id_user = ?', [id]);
+        connection.release();
+        /** Retour en fonction d'une suppression ou non */
+        if (result.affectedRows === 0) {
+            response.status(404).json({ message: 'Livreur non trouvé.' });
+        }
+        else {
+            response.status(200).json({ message: 'Livreur supprimé avec succès.' });
+        }
+    }
+    catch (error) {
+        response.status(500).json({ message: 'Erreur lors de la suppression du livreur.' });
+    }
+});
+exports.deleteDelivery = deleteDelivery;
 //# sourceMappingURL=deliveryController.js.map

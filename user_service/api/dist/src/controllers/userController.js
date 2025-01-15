@@ -20,7 +20,6 @@ const SALT_ROUNDS = 10; // Nombre de rounds pour le hashage
 /** Création d'un utilisateur */
 const userCreate = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Request body:', request.body);
         const { email, password, role_id } = request.body;
         if (!email || !password || !role_id) {
             response.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis.' });
@@ -39,7 +38,7 @@ const userCreate = (request, response) => __awaiter(void 0, void 0, void 0, func
         const [result] = yield connection.execute('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)', [email, hashedPassword, role_id]);
         connection.release();
         if (result.affectedRows > 0) {
-            response.status(201).json({ message: 'Utilisateur créé avec succès', userId: result.insertId });
+            response.status(201).json({ message: 'Utilisateur créé avec succès', user_id: result.insertId });
         }
         else {
             response.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.' });
@@ -120,8 +119,10 @@ const userGetOne = (request, response) => __awaiter(void 0, void 0, void 0, func
     try {
         const connection = yield connectionDb_1.pool.getConnection();
         const id = request.params.id;
-        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name FROM users
-             LEFT JOIN roles ON users.role_id = roles.id WHERE users.id = ?`, [id]);
+        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name
+             FROM users
+                      LEFT JOIN roles ON users.role_id = roles.id
+             WHERE users.user_id = ?`, [id]);
         connection.release();
         if (rows.length === 0) {
             response.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -146,8 +147,9 @@ exports.userGetOne = userGetOne;
 const userGetAll = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connection = yield connectionDb_1.pool.getConnection();
-        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name FROM users
-             LEFT JOIN roles ON users.role_id = roles.id`);
+        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name
+             FROM users
+                      LEFT JOIN roles ON users.role_id = roles.id`);
         connection.release();
         if (rows.length === 0) {
             response.status(404).json({ message: 'Aucun utilisateur trouvé' });
@@ -204,46 +206,39 @@ exports.userDelete = userDelete;
 /**
  * Vérifie l'existence d'un utilisateur et la validité de son mot de passe
  */
-const verifyUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+const verifyUser = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const email = request.body.email;
+        const password = request.body.password;
         if (!email || !password) {
-            return {
-                status: userModel_1.UserVerificationStatus.INVALID_INPUT,
-                message: "Email et mot de passe requis"
-            };
+            response.status(403).json({ message: 'Email et mot de passe requis' });
+            message: "Email et mot de passe requis";
         }
-        const connection = yield connectionDb_1.pool.getConnection();
-        const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name 
-             FROM users 
-             LEFT JOIN roles ON users.role_id = roles.id 
-             WHERE users.email = ?`, [email]);
-        connection.release();
-        if (rows.length === 0) {
-            return {
-                status: userModel_1.UserVerificationStatus.INVALID_EMAIL,
-                message: "Email non trouvé"
-            };
+        else {
+            const connection = yield connectionDb_1.pool.getConnection();
+            const [rows] = yield connection.execute(`SELECT users.*, roles.name AS role_name
+                 FROM users
+                          LEFT JOIN roles ON users.role_id = roles.id
+                 WHERE users.email = ?`, [email]);
+            connection.release();
+            if (rows.length === 0) {
+                response.status(404).json({ message: 'Utilisateur introuvable' });
+            }
+            else {
+                const user = (0, userModel_1.rowToUserInterface)(rows[0]);
+                const passwordMatch = yield verifyPassword(password, user.password);
+                if (!passwordMatch) {
+                    response.status(401).json({ message: 'Mot de passe incorrect' });
+                }
+                else {
+                    response.status(200).json({ message: 'Authentification réussi', user });
+                }
+            }
         }
-        const user = rows[0];
-        const passwordMatch = yield verifyPassword(password, user.password);
-        if (!passwordMatch) {
-            return {
-                status: userModel_1.UserVerificationStatus.INVALID_PASSWORD,
-                message: "Mot de passe incorrect"
-            };
-        }
-        return {
-            status: userModel_1.UserVerificationStatus.SUCCESS,
-            user: (0, userModel_1.rowToUserInterface)(user),
-            message: "Authentification réussie"
-        };
     }
     catch (error) {
-        console.error('Error in verifyUser:', error);
-        return {
-            status: userModel_1.UserVerificationStatus.SERVER_ERROR,
-            message: error instanceof Error ? error.message : "Erreur serveur inconnue"
-        };
+        console.log(error);
+        response.status(500).json({ message: 'Erreur serveur', error: error });
     }
 });
 exports.verifyUser = verifyUser;

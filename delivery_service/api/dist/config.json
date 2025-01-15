@@ -1,14 +1,14 @@
 {
-    "user": "",
-    "port": "",
+    "user": "root",
     "password": "",
-    "server": "",
-    "database": "",
+    "server": "localhost",
+    "port": "3306",
+    "database": "service_delivery",
     "options": {
-        "trustedConnection": true,
+        "trustedConnection": false,
         "encrypt": false,
         "enableArithAbort": true,
-        "trustServerCertificate": true
+        "trustServerCertificate": false
     },
     "HOST": 5005
 }
