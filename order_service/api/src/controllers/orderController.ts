@@ -73,7 +73,6 @@ const orderCreate = async (request: express.Request, response: express.Response)
     try {
         /** Récupération des paramètres de la requête */
         const { id_shop, id_client, id_delivery_user, total_amount, items, client_note } = request.body;
-        const {shop_id, client_id, delivery_id, total_amount, items, client_note} = request.body;
 
         /** Valider l'objet en le convertissant au format OrderInterface */
         const order: OrderInterface = {
@@ -89,8 +88,10 @@ const orderCreate = async (request: express.Request, response: express.Response)
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!shop_id || !client_id || !total_amount || !items) {
+        if (!id_shop || !id_client || !total_amount || !items) {
             response.status(400).json({message: "Tous les champs requis ne sont pas fournis."});
+            return ;
+        }
         if (!id_shop || !id_client || !total_amount || !items) {
             response.status(400).json({ message: "Tous les champs requis ne sont pas fournis." });
             return;
@@ -109,6 +110,7 @@ const orderCreate = async (request: express.Request, response: express.Response)
         response.status(500).json({message: "Erreur serveur"});
     }
 };
+
 
 /**Mise à jour d'une commande */
 const orderUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
@@ -132,7 +134,7 @@ const orderUpdate = async (request: express.Request, response: express.Response)
          * order_date : on garde la date initiale création
          */
         const order: Partial<OrderInterface> = {
-            delivery_id,
+            id_delivery_user,
             status,
             total_amount,
             items, // JSON.stringify sera appliqué avant la requête
@@ -142,7 +144,7 @@ const orderUpdate = async (request: express.Request, response: express.Response)
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>('UPDATE `order` SET delivery_id = ?, status = ?, total_amount = ?, items = ?, client_note = ? WHERE order_id = ?', [
-            order.delivery_id, order.status, order.total_amount, JSON.stringify(order.items), order.client_note, id
+            order.id_delivery_user, order.status, order.total_amount, JSON.stringify(order.items), order.client_note, id
         ]);
         connection.release();
 

@@ -74,20 +74,22 @@ const clientGetAll = async (request: express.Request, response: express.Response
 const clientCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** Récupération des paramètres de la requête */
-        const { phone, address, city, postal_code, user_id } = request.body;
+        const { phone, address, city, postal_code, id_user ,firstname , lastname} = request.body;
 
         /** Valider l'objet en le convertissant au format ClientInterface */
         const client: ClientInterface = {
-            client_id: 0, // Auto-incrémenté par la BDD
+            id_client: 0, // Auto-incrémenté par la BDD
+            firstname,
+            lastname,
             phone,
             address,
             city,
             postal_code,
-            user_id,
+            id_user,
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!phone || !address || !city || !postal_code || !user_id) {
+        if (!phone || !address || !city || !postal_code || !id_user) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -96,7 +98,7 @@ const clientCreate = async (request: express.Request, response: express.Response
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
             'INSERT INTO client (phone, address, city, postal_code, user_id) VALUES (?, ?, ?, ?, ?)',
-            [client.phone, client.address, client.city, client.postal_code, client.user_id]
+            [client.phone, client.address, client.city, client.postal_code, client.id_user]
         );
         connection.release();
 
