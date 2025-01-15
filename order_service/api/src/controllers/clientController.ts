@@ -201,7 +201,7 @@ const clientDelete = async (request: express.Request, response: express.Response
         /** Suppression en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'DELETE FROM client WHERE user_id = ?',
+            'DELETE FROM client WHERE client_id = ?',
             [id]
         );
         connection.release();

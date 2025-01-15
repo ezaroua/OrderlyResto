@@ -4,12 +4,14 @@ import {RowDataPacket} from "mysql2/promise";
  * Interface client
  */
 interface ClientInterface {
-    client_id: number;
+    id_client: number;
+    firstname: string;
+    lastname: string;
     phone: string;
     address: string;
     city: string;
     postal_code: string;
-    user_id: number;
+    id_user: number;
 }
 
 /**
@@ -17,12 +19,14 @@ interface ClientInterface {
  */
 function rowToClientInterface (row: RowDataPacket): ClientInterface {
     return {
-        client_id: row['client_id'],
+        id_client: row['id_client'],
+        firstname: row['firstname'],
+        lastname: row['lastname'],
         phone: row['phone'],
         address: row['address'],
         city: row['city'],
         postal_code: row['postal_code'],
-        user_id: row['user_id']
+        id_user: row['id_user']
     };
 }
 
