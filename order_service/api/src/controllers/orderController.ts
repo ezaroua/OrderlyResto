@@ -13,7 +13,7 @@ const orderGetOne = async (request: express.Request, response: express.Response)
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer une commande*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE order_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE id_order = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -129,8 +129,8 @@ const orderUpdate = async (request: express.Request, response: express.Response)
         /** Valider l'objet en le convertissant au format OrderInterface */
         /** Partiel parce que pas besoin de pouvoir tout modifier : */
         /**
-         * shop_id : on ne change pas le resto : autant changer de commande (supprimer et recréer)
-         * client_id : on ne change pas le client : autant changer de commande (supprimer et recréer)
+         * id_shop : on ne change pas le resto : autant changer de commande (supprimer et recréer)
+         * id_client : on ne change pas le client : autant changer de commande (supprimer et recréer)
          * order_date : on garde la date initiale création
          */
         const order: Partial<OrderInterface> = {
@@ -143,7 +143,7 @@ const orderUpdate = async (request: express.Request, response: express.Response)
 
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
-        const [result] = await connection.execute<ResultSetHeader>('UPDATE `order` SET delivery_id = ?, status = ?, total_amount = ?, items = ?, client_note = ? WHERE order_id = ?', [
+        const [result] = await connection.execute<ResultSetHeader>('UPDATE `order` SET id_delivery_user = ?, status = ?, total_amount = ?, items = ?, client_note = ? WHERE id_order = ?', [
             order.id_delivery_user, order.status, order.total_amount, JSON.stringify(order.items), order.client_note, id
         ]);
         connection.release();
@@ -207,7 +207,7 @@ const orderDelete = async (request: express.Request, response: express.Response)
 
         /** Suppression en BDD */
         const connection = await pool.getConnection();
-        const [result] = await connection.execute<ResultSetHeader>('DELETE FROM `order` WHERE order_id = ?', [id]);
+        const [result] = await connection.execute<ResultSetHeader>('DELETE FROM `order` WHERE id_order = ?', [id]);
         connection.release();
 
         /** Retour en fonction d'une suppression ou non */

@@ -13,7 +13,7 @@ const clientGetOne = async (request: express.Request, response: express.Response
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer un client*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE user_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM client WHERE id_user = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -75,7 +75,7 @@ const clientCreate = async (request: express.Request, response: express.Response
     try {
         /** Récupération des paramètres de la requête */
         const { phone, address, city, postal_code, id_user ,firstname , lastname} = request.body;
-
+console.log(request.body)
         /** Valider l'objet en le convertissant au format ClientInterface */
         const client: ClientInterface = {
             id_client: 0, // Auto-incrémenté par la BDD
@@ -89,7 +89,7 @@ const clientCreate = async (request: express.Request, response: express.Response
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!phone || !address || !city || !postal_code || !id_user) {
+        if (!firstname || !lastname || !phone || !address || !city || !postal_code || !id_user) {
             response.status(400).json({ message: 'Tous les champs requis doivent être fournis.' });
             return;
         }
@@ -97,13 +97,13 @@ const clientCreate = async (request: express.Request, response: express.Response
         /** Insertion en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'INSERT INTO client (phone, address, city, postal_code, user_id) VALUES (?, ?, ?, ?, ?)',
-            [client.phone, client.address, client.city, client.postal_code, client.id_user]
+            'INSERT INTO client (phone, address, city, postal_code, id_user, firstname , lastname) VALUES (?, ?, ?, ?, ? ,? ,? )',
+            [client.phone, client.address, client.city, client.postal_code, client.id_user, client.firstname ,client.lastname]
         );
         connection.release();
 
         /** Retour de la requête */
-        response.status(201).json({ message: 'Client créé avec succès.', client_id: result.insertId });
+        response.status(201).json({ message: 'Client créé avec succès.', id_client: result.insertId });
     } catch (error) {
         response.status(500).json({ message: 'Erreur lors de la création du client.' });
     }
@@ -115,7 +115,7 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** ID du client à modifier */
         const id = request.params.id;
         /** Récupération des paramètres de la requête */
-        const { phone, address, city, postal_code } = request.body;
+        const { phone, address, city, postal_code , firstname , lastname} = request.body;
 
         /** Vérification des paramètres obligatoires */
         if (!phone || !address || !city || !postal_code) {
@@ -133,13 +133,15 @@ const clientUpdate = async (request: express.Request, response: express.Response
             address,
             city,
             postal_code,
+            firstname,
+            lastname
         };
 
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? WHERE client_id = ?',
-            [client.phone, client.address, client.city, client.postal_code, id]
+            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? , firstname = ? , lastname = ? WHERE id_client = ?',
+            [client.phone, client.address, client.city, client.postal_code, client.firstname , client.lastname , id]
         );
         connection.release();
 
@@ -178,7 +180,7 @@ const clientPatch = async (request: express.Request, response: express.Response)
 
         /** Modification en BDD si l'id indiqué existe */
         const [result] = await connection.execute<ResultSetHeader>(
-            `UPDATE client SET ${fields} WHERE client_id = ?`,
+            `UPDATE client SET ${fields} WHERE id_client = ?`,
             values
         );
         connection.release();
@@ -203,7 +205,7 @@ const clientDelete = async (request: express.Request, response: express.Response
         /** Suppression en BDD */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'DELETE FROM client WHERE client_id = ?',
+            'DELETE FROM client WHERE id_client = ?',
             [id]
         );
         connection.release();

@@ -11,10 +11,10 @@ const router = express_1.default.Router();
  * Routes d'accès aux utilisateurs
  */
 router.get('/delivery/:id', authMiddleWare_1.checkApiKey, deliveryController_1.deliveryGetOne);
-router.get('/delivery/', authMiddleWare_1.checkApiKey, deliveryController_1.deliveryGetAll);
+router.get('/delivery/', authMiddleWare_1.checkApiKey, deliveryController_1.deliveryGetAll); // A supprimer
 router.put('/rating/:id', authMiddleWare_1.checkApiKey, deliveryController_1.rateDelivery);
 router.post('/register/', authMiddleWare_1.checkApiKey, deliveryController_1.registerDelivery);
 router.put('/update/:id', authMiddleWare_1.checkApiKey, deliveryController_1.updateDelivery);
-router.delete('/delivery/:id', authMiddleWare_1.checkApiKey, deliveryController_1.deleteDelivery);
+router.delete('/delivery/:id', authMiddleWare_1.checkApiKey, deliveryController_1.deleteDelivery); // A supprimer
 exports.default = router;
 //# sourceMappingURL=deliveryRoutes.js.map

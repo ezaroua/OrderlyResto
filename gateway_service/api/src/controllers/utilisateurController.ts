@@ -19,7 +19,6 @@ const userCreate = async (request: express.Request, response: express.Response):
             }
         });
 
-
         switch (request.body.role_id) {
             case 1:
                 break;
@@ -30,11 +29,13 @@ const userCreate = async (request: express.Request, response: express.Response):
                     url: `http://localhost:5003/clients/`,
                     headers: {'api-key': `${process.env.API_KEY}`},
                     data: {
-                        user_id: result.data.user_id,
+                        id_user: result.data.user_id,
                         phone: request.body.phone,
                         address: request.body.address,
                         city: request.body.city,
-                        postal_code: request.body.postal_code
+                        postal_code: request.body.postal_code,
+                        firstname: request.body.firstname,
+                        lastname: request.body.lastname
                     }
                 });
                 break;

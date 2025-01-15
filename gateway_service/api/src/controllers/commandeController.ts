@@ -77,10 +77,10 @@ const updateOrder = async (request: express.Request, response: express.Response)
             url: `http://localhost:5003/orders/${id}`,
             headers: {'api-key': `${process.env.API_KEY}`},
             data: {
-                client_id: request.body.client_id,
-                shop_id: request.body.shop_id,
+                id_client: request.body.id_client,
+                id_shop: request.body.id_shop,
                 status: request.body.status,
-                delivery_id: request.body.delivery_id,
+                id_delivery_user: request.body.id_delivery_user,
                 total_amount: request.body.total_amount,
                 client_note: request.body.client_note,
                 items: request.body.items
