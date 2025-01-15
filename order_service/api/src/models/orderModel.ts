@@ -19,10 +19,10 @@ interface OrderItem {
  * Interface commande
  */
 interface OrderInterface {
-    order_id: number;
-    shop_id: number;
-    client_id: number;
-    delivery_id?: number;
+    id_order: number;
+    id_shop: number;
+    id_client: number;
+    id_delivery_user?: number;
     status: OrderStatus; 
     total_amount: number;
     items: OrderItem[];
@@ -35,10 +35,10 @@ interface OrderInterface {
  */
 function rowToOrderInterface (row: RowDataPacket): OrderInterface {
     return {
-        order_id: row['order_id'],
-        shop_id: row['shop_id'],
-        client_id: row['client_id'],
-        delivery_id: row['delivery_id'],
+        id_order: row['id_order'],
+        id_shop: row['id_shop'],
+        id_client: row['id_client'],
+        id_delivery_user: row['id_delivery_user'],
         status: row['status'],
         total_amount: row['total_amount'],
         items: row['items'],

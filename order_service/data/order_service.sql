@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 23 nov. 2024 à 18:13
+-- Généré le : mar. 10 déc. 2024 à 21:15
 -- Version du serveur : 10.4.22-MariaDB
 -- Version de PHP : 8.1.2
 
@@ -28,22 +28,25 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `client` (
-  `client_id` int(11) NOT NULL,
+  `id_client` int(11) NOT NULL,
+  `firstname` varchar(50) NOT NULL,
+  `lastname` varchar(50) NOT NULL,
   `phone` varchar(15) NOT NULL,
   `address` varchar(255) NOT NULL,
   `city` varchar(100) NOT NULL,
   `postal_code` varchar(20) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `client`
 --
 
-INSERT INTO `client` (`client_id`, `phone`, `address`, `city`, `postal_code`, `user_id`) VALUES
-(1, '+330638714263', '18 Rue Voltaire', 'Lyon', '69008', 1),
-(2, '+33063871424', '35c Rue Avion', 'Villeurbanne', '69100', 2),
-(4, '+33607353421', '10 Rue Je sais pas', 'Ville-sur-Fleuve', '17890', 3);
+INSERT INTO `client` (`id_client`, `firstname`, `lastname`, `phone`, `address`, `city`, `postal_code`, `id_user`) VALUES
+(1, 'Louis', 'MORIN', '+330638714263', '18 Rue Voltaire', 'Lyon', '69008', 1),
+(2, 'Fabrice', 'MARTIN', '+33063871424', '35c Rue Avion', 'Villeurbanne', '69100', 2),
+(4, 'Hector', 'BERNARD', '+33607353421', '10 Rue Je sais pas', 'Ville-sur-Fleuve', '17890', 3),
+(6, 'Jacques', 'BERTRAND', '+33607353421', '10 Rue Jean c\'est bon', 'Besancon', '57008', 3);
 
 -- --------------------------------------------------------
 
@@ -52,10 +55,10 @@ INSERT INTO `client` (`client_id`, `phone`, `address`, `city`, `postal_code`, `u
 --
 
 CREATE TABLE `order` (
-  `order_id` int(11) NOT NULL,
-  `shop_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `delivery_id` int(11) DEFAULT NULL,
+  `id_order` int(11) NOT NULL,
+  `id_shop` int(11) NOT NULL,
+  `id_client` int(11) NOT NULL,
+  `id_delivery_user` int(11) DEFAULT NULL,
   `status` enum('draft','pending','preparing','out_for_delivery','delivered','canceled') NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `items` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`items`)),
@@ -67,7 +70,7 @@ CREATE TABLE `order` (
 -- Déchargement des données de la table `order`
 --
 
-INSERT INTO `order` (`order_id`, `shop_id`, `client_id`, `delivery_id`, `status`, `total_amount`, `items`, `order_date`, `client_note`) VALUES
+INSERT INTO `order` (`id_order`, `id_shop`, `id_client`, `id_delivery_user`, `status`, `total_amount`, `items`, `order_date`, `client_note`) VALUES
 (1, 1, 1, 2, 'draft', '19.99', '[{\"product_id\": 37, \"quantity\": 2}, {\"product_id\": 58, \"quantity\": 1, \"special_demand\": \"Pas de champignons\"}]', '2024-11-17 15:00:37', 'code de la porte : 78b9'),
 (2, 2, 1, 3, 'pending', '14.99', '[{\"product_id\": 3, \"quantity\": 1}]', '2024-11-17 15:01:35', 'code de la porte : 78b97777'),
 (3, 1, 2, 3, 'pending', '13.99', '[{\"product_id\":37,\"quantity\":2},{\"product_id\":18,\"quantity\":1}]', '2024-11-23 15:41:24', 'Pas de vinaigre'),
@@ -82,13 +85,13 @@ INSERT INTO `order` (`order_id`, `shop_id`, `client_id`, `delivery_id`, `status`
 -- Index pour la table `client`
 --
 ALTER TABLE `client`
-  ADD PRIMARY KEY (`client_id`);
+  ADD PRIMARY KEY (`id_client`);
 
 --
 -- Index pour la table `order`
 --
 ALTER TABLE `order`
-  ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`id_order`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -98,13 +101,13 @@ ALTER TABLE `order`
 -- AUTO_INCREMENT pour la table `client`
 --
 ALTER TABLE `client`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_client` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `order`
 --
 ALTER TABLE `order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

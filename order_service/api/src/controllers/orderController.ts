@@ -13,7 +13,7 @@ const orderGetOne = async (request: express.Request, response: express.Response)
         const id = request.params.id;
 
         /**Execute une requete sur la base de données SQL pour recuperer une commande*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE order_id = ?', [id]);
+        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE id_order = ?', [id]);
 
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
@@ -72,14 +72,14 @@ const orderGetAll = async (request: express.Request, response: express.Response)
 const orderCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         /** Récupération des paramètres de la requête */
-        const { shop_id, client_id, delivery_id, total_amount, items, client_note } = request.body;
+        const { id_shop, id_client, id_delivery_user, total_amount, items, client_note } = request.body;
 
         /** Valider l'objet en le convertissant au format OrderInterface */
         const order: OrderInterface = {
-            order_id: 0, // Auto-incrémenté par la BDD
-            shop_id,
-            client_id,
-            delivery_id,
+            id_order: 0, // Auto-incrémenté par la BDD
+            id_shop,
+            id_client,
+            id_delivery_user,
             status: 'draft', // une commande crée est en draft par défaut
             total_amount,
             items, // JSON.stringify sera appliqué avant l'insertion
@@ -88,20 +88,20 @@ const orderCreate = async (request: express.Request, response: express.Response)
         };
 
         /** Vérification des paramètres obligatoires */
-        if (!shop_id || !client_id || !total_amount || !items) {
+        if (!id_shop || !id_client || !total_amount || !items) {
             response.status(400).json({ message: "Tous les champs requis ne sont pas fournis." });
             return;
         }
 
         /** Insertion en BDD */
         const connection = await pool.getConnection();
-        const [result] = await connection.execute<ResultSetHeader>('INSERT INTO `order` (shop_id, client_id, delivery_id, status, total_amount, items, order_date, client_note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
-            order.shop_id, order.client_id, order.delivery_id, order.status, order.total_amount, JSON.stringify(order.items), order.order_date, order.client_note
+        const [result] = await connection.execute<ResultSetHeader>('INSERT INTO `order` (id_shop, id_client, id_delivery_user, status, total_amount, items, order_date, client_note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
+            order.id_shop, order.id_client, order.id_delivery_user, order.status, order.total_amount, JSON.stringify(order.items), order.order_date, order.client_note
         ]);
         connection.release();
 
         /** Retour de la requête */
-        response.status(201).json({ message: "Commande créée avec succès.", order_id: result.insertId });
+        response.status(201).json({ message: "Commande créée avec succès.", id_order: result.insertId });
     } catch (error) {
         response.status(500).json({ message: "Erreur serveur" });
     }
@@ -113,10 +113,10 @@ const orderUpdate = async (request: express.Request, response: express.Response)
         /** ID de la commande à modifier */
         const { id } = request.params;
         /** Récupération des paramètres de la requête */
-        const { delivery_id, status, total_amount, items, client_note } = request.body;
+        const { id_delivery_user, status, total_amount, items, client_note } = request.body;
 
         /** Vérification des paramètres obligatoires */
-        if (!delivery_id || !status || !total_amount || !items || !client_note) {
+        if (!id_delivery_user || !status || !total_amount || !items || !client_note) {
             response.status(400).json({ message: "Tous les champs requis ne sont pas fournis." });
             return;
         }
@@ -124,12 +124,12 @@ const orderUpdate = async (request: express.Request, response: express.Response)
         /** Valider l'objet en le convertissant au format OrderInterface */
         /** Partiel parce que pas besoin de pouvoir tout modifier : */
         /**
-         * shop_id : on ne change pas le resto : autant changer de commande (supprimer et recréer)
-         * client_id : on ne change pas le client : autant changer de commande (supprimer et recréer)
+         * id_shop : on ne change pas le resto : autant changer de commande (supprimer et recréer)
+         * id_client : on ne change pas le client : autant changer de commande (supprimer et recréer)
          * order_date : on garde la date initiale création
          */
         const order: Partial<OrderInterface> = {
-            delivery_id,
+            id_delivery_user,
             status,
             total_amount,
             items, // JSON.stringify sera appliqué avant la requête
@@ -138,8 +138,8 @@ const orderUpdate = async (request: express.Request, response: express.Response)
 
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
-        const [result] = await connection.execute<ResultSetHeader>('UPDATE `order` SET delivery_id = ?, status = ?, total_amount = ?, items = ?, client_note = ? WHERE order_id = ?', [
-            order.delivery_id, order.status, order.total_amount, JSON.stringify(order.items), order.client_note, id
+        const [result] = await connection.execute<ResultSetHeader>('UPDATE `order` SET id_delivery_user = ?, status = ?, total_amount = ?, items = ?, client_note = ? WHERE id_order = ?', [
+            order.id_delivery_user, order.status, order.total_amount, JSON.stringify(order.items), order.client_note, id
         ]);
         connection.release();
 
@@ -178,7 +178,7 @@ const orderPatch = async (request: express.Request, response: express.Response):
 
         /** Modification en BDD si l'id indiqué existe */
         const [result] = await connection.execute<ResultSetHeader>(
-            `UPDATE \`order\` SET ${fields} WHERE order_id = ?`,
+            `UPDATE \`order\` SET ${fields} WHERE id_order = ?`,
             values
         );
         connection.release();
@@ -202,7 +202,7 @@ const orderDelete = async (request: express.Request, response: express.Response)
 
         /** Suppression en BDD */
         const connection = await pool.getConnection();
-        const [result] = await connection.execute<ResultSetHeader>('DELETE FROM `order` WHERE order_id = ?', [id]);
+        const [result] = await connection.execute<ResultSetHeader>('DELETE FROM `order` WHERE id_order = ?', [id]);
         connection.release();
 
         /** Retour en fonction d'une suppression ou non */
