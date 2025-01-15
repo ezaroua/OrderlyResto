@@ -75,7 +75,7 @@ const clientCreate = async (request: express.Request, response: express.Response
     try {
         /** Récupération des paramètres de la requête */
         const { phone, address, city, postal_code, id_user ,firstname , lastname} = request.body;
-console.log(request.body)
+
         /** Valider l'objet en le convertissant au format ClientInterface */
         const client: ClientInterface = {
             id_client: 0, // Auto-incrémenté par la BDD

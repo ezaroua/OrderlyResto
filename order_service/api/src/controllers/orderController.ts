@@ -18,6 +18,7 @@ const orderGetOne = async (request: express.Request, response: express.Response)
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
 
+        console.log(rows)
         if (rows.length === 0) {
             /** Renvoyer une reponse not found*/
             response.status(404).json({message: 'Commande non trouvée'});
@@ -39,13 +40,24 @@ const orderGetOne = async (request: express.Request, response: express.Response)
 const orderGetAll = async (request: express.Request, response: express.Response):Promise<void> => {
     try {
         let orders : OrderInterface[] = [];
+        let rows: RowDataPacket[] = [];
 
         /** Obtenir une connexion à partir du pool*/
         const connection = await pool.getConnection();
 
-        /** Exécuter une requête SQL*/
-        const [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order`');
+        if (request.params.roleid == "1") {
+            /** Exécuter une requête SQL*/
+            [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE id_shop = ? ',[request.params.id]);
+        }
 
+        if(request.params.roleid == "2") {
+             [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE id_client = ? ',[request.params.id]);
+        }
+
+        if(request.params.roleid == "3") {
+            /** Exécuter une requête SQL*/
+            [rows] = await connection.execute<RowDataPacket[]>('SELECT * FROM `order` WHERE id_delivery_user = ? ',[request.params.id]);
+        }
         /**Fermeture de la connexion avec la base de données SQL*/
         connection.release();
 
