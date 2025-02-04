@@ -7,6 +7,7 @@ const getAllOrder = async (request: express.Request, response: express.Response)
 
         const id = request.params.id;
         const roleId = request.params.roleId;
+        const statut = request.query.statut;
 
         switch (roleId) {
             case "1":

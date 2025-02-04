@@ -112,6 +112,7 @@ const clientCreate = async (request: express.Request, response: express.Response
 /**Mise à jour d'un client */
 const clientUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
+        console.log(request.body)
         /** ID du client à modifier */
         const id = request.params.id;
         /** Récupération des paramètres de la requête */
@@ -140,7 +141,7 @@ const clientUpdate = async (request: express.Request, response: express.Response
         /** Modification en BDD si l'id indiqué existe */
         const connection = await pool.getConnection();
         const [result] = await connection.execute<ResultSetHeader>(
-            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? , firstname = ? , lastname = ? WHERE id_client = ?',
+            'UPDATE client SET phone = ?, address = ?, city = ?, postal_code = ? , firstname = ? , lastname = ? WHERE id_user = ?',
             [client.phone, client.address, client.city, client.postal_code, client.firstname , client.lastname , id]
         );
         connection.release();

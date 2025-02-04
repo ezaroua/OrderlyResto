@@ -15,10 +15,10 @@ const router = express.Router();
  * Routes d'accès aux utilisateurs
  */
 router.get('/delivery/:id',checkApiKey, deliveryGetOne);
-router.get('/delivery/',checkApiKey, deliveryGetAll); // A supprimer
+router.get('/delivery/',checkApiKey, deliveryGetAll);
 router.put('/rating/:id',checkApiKey, rateDelivery);
 router.post('/register/',checkApiKey, registerDelivery);
 router.put('/update/:id',checkApiKey, updateDelivery);
-router.delete('/delivery/:id',checkApiKey,deleteDelivery) // A supprimer
+router.delete('/delivery/:id',checkApiKey,deleteDelivery)
 
 export default router;
