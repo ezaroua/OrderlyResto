@@ -2,27 +2,19 @@
 	"info": {
 		"_postman_id": "9e117ea8-a326-41e8-b14c-2b5e1d4177a4",
 		"name": "Gateway service API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "40690521"
 	},
 	"item": [
 		{
-			"name": "Login 1",
+			"name": "Login Livreur",
 			"request": {
 				"auth": {
 					"type": "apikey",
-					"apikey": [
-						{
-							"key": "key",
-							"value": "api-key",
-							"type": "string"
-						},
-						{
-							"key": "value",
-							"value": "Service",
-							"type": "string"
-						}
-					]
+					"apikey": {
+						"key": "api-key",
+						"value": "Service"
+					}
 				},
 				"method": "POST",
 				"header": [],
@@ -35,37 +27,19 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:5001/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"login"
-					]
-				}
+				"url": "http://localhost:5001/login"
 			},
 			"response": []
 		},
 		{
-			"name": "Login 2",
+			"name": "Login Client",
 			"request": {
 				"auth": {
 					"type": "apikey",
-					"apikey": [
-						{
-							"key": "key",
-							"value": "api-key",
-							"type": "string"
-						},
-						{
-							"key": "value",
-							"value": "Service",
-							"type": "string"
-						}
-					]
+					"apikey": {
+						"key": "api-key",
+						"value": "Service"
+					}
 				},
 				"method": "POST",
 				"header": [],
@@ -78,17 +52,32 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:5001/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"login"
-					]
-				}
+				"url": "http://localhost:5001/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Login Restaurant",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": {
+						"key": "api-key",
+						"value": "Service"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"issame100@hotmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5001/login"
 			},
 			"response": []
 		},
@@ -97,41 +86,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiY2xpZW50QGV4YW1wbGUuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MiwiZXhwIjoxNzM1NDg4NDU4LCJpYXQiOjE3MzU0ODQ4NTh9.ZVAR5r34ddfHYJTRWpG-B8SLxK2ZF1SENSzGQTVSHyI",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiY2xpZW50QGV4YW1wbGUuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MiwiZXhwIjoxNzM1NDg4NDU4LCJpYXQiOjE3MzU0ODQ4NTh9.ZVAR5r34ddfHYJTRWpG-B8SLxK2ZF1SENSzGQTVSHyI"
+					}
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"issame100@hotmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role_id\":2,\r\n    \"phone\": \"0752623995\",\r\n    \"address\": \"13 avenue salvador allende\",\r\n    \"city\": \"villeurbanne\",\r\n    \"postal_code\": \"69100\"\r\n}",
+					"raw": "{\r\n    \"email\": \"issame100@hotmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role_id\":2,\r\n    \"phone\": \"0752623995\",\r\n    \"address\": \"13 avenue salvador allende\",\r\n    \"city\": \"villeurbanne\",\r\n    \"postal_code\": \"69100\",\r\n    \"firstname\":\"issame\",\r\n    \"lastname\":\"hassane\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:5001/create",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"create"
-					]
-				}
+				"url": "http://localhost:5001/create"
 			},
 			"response": []
 		},
 		{
-			"name": "Creation admin",
+			"name": "Creation restaurant",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -144,46 +119,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:5001/create",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"create"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Suppression compte",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiY2xpZW50QGV4YW1wbGUuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MiwiZXhwIjoxNzM1NDkyMTExLCJpYXQiOjE3MzU0ODg1MTF9.u5I-w_rjkzv0VMxXHYdaLRQnBpQhPkvCxTTlf284CWA",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/43",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"43"
-					]
-				}
+				"url": "http://localhost:5001/create"
 			},
 			"response": []
 		},
@@ -192,13 +128,9 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiY2xpZW50QGV4YW1wbGUuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MiwiZXhwIjoxNzM1NDg0Nzk0LCJpYXQiOjE3MzU0ODExOTR9.ABRyWCrFFvRhHkNRoB2iVtJ7g1642W-IzP1P3biVDtQ",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiY2xpZW50QGV4YW1wbGUuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MiwiZXhwIjoxNzM1NDg0Nzk0LCJpYXQiOjE3MzU0ODExOTR9.ABRyWCrFFvRhHkNRoB2iVtJ7g1642W-IzP1P3biVDtQ"
+					}
 				},
 				"method": "POST",
 				"header": [],
@@ -211,53 +143,65 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:5001/create",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"create"
-					]
-				}
+				"url": "http://localhost:5001/create"
 			},
 			"response": []
 		},
 		{
-			"name": "Mise à jour profil",
+			"name": "Note commande",
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1Nzc4MjksImlhdCI6MTczNTU3NDIyOX0.jmjwOjajbzj5aSduHUa40GnyHmQGZT7BKeoa07tGGpg",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
 				},
-				"method": "PUT",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"issame10@hotmail.com\",\r\n    \"password\": \"1234567\",\r\n    \"role_id\":3,\r\n    \"first_name\": \"issame\",\r\n    \"last_name\": \"hassane\",\r\n    \"vehicle\": \"fiat\"\r\n}",
+					"raw": "{\r\n    \"shop-id\":1,\r\n    \"delivery_id\":1,\r\n    \"rating_delivery\":3,\r\n    \"rating_shop\": 3\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
+				"url": "http://localhost:5001/rating/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Recuperation commande role",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
+				},
+				"method": "GET",
+				"header": [],
 				"url": {
-					"raw": "http://localhost:5001/5",
+					"raw": "http://localhost:5001/orders/all?id=1&roleId=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"5"
+						"orders",
+						"all"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						},
+						{
+							"key": "roleId",
+							"value": "2"
+						}
 					]
 				}
 			},
@@ -268,13 +212,9 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1NzIyMDEsImlhdCI6MTczNTU2ODYwMX0.w7UnZcRz8tcbSn1wS9h7ilseQ7Fh4BxhwCY7v28oZjA",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
 				},
 				"method": "GET",
 				"header": [],
@@ -308,105 +248,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1NzY0MzQsImlhdCI6MTczNTU3MjgzNH0.xnTnbeU5tOlGw6JI3OkpHzbAOcK9GlqGHvl3pjU2HCQ",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
 				},
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/shop/3",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"shop",
-						"3"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Modification commande",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1NzIyMDEsImlhdCI6MTczNTU2ODYwMX0.w7UnZcRz8tcbSn1wS9h7ilseQ7Fh4BxhwCY7v28oZjA",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"client_id\":1,\r\n    \"shop_id\":1,\r\n    \"delivery_id\":1,\r\n    \"total_amount\":13,\r\n    \"status\":\"preparing\",\r\n    \"client_note\":\"Pas de cornichon\",\r\n    \"items\":[\r\n        {\r\n            \"product_id\":1,\r\n            \"quantity\":2\r\n        },\r\n        {\r\n            \"product_id\":3,\r\n            \"quantity\":2\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5001/orders/10",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"orders",
-						"10"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "New Request",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1NzY0MzQsImlhdCI6MTczNTU3MjgzNH0.xnTnbeU5tOlGw6JI3OkpHzbAOcK9GlqGHvl3pjU2HCQ",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"client_id\":1,\r\n    \"shop_id\":1,\r\n    \"delivery_id\":1,\r\n    \"total_amount\":13,\r\n    \"status\":\"preparing\",\r\n    \"client_note\":\"Pas de cornichon\",\r\n    \"items\":[\r\n        {\r\n            \"product_id\":1,\r\n            \"quantity\":2\r\n        },\r\n        {\r\n            \"product_id\":3,\r\n            \"quantity\":2\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5001/orders",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"orders"
-					]
-				}
+				"url": "http://localhost:5001/shop/3"
 			},
 			"response": []
 		},
@@ -415,66 +263,124 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1NzY0MzQsImlhdCI6MTczNTU3MjgzNH0.xnTnbeU5tOlGw6JI3OkpHzbAOcK9GlqGHvl3pjU2HCQ",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU1NzY0MzQsImlhdCI6MTczNTU3MjgzNH0.xnTnbeU5tOlGw6JI3OkpHzbAOcK9GlqGHvl3pjU2HCQ"
+					}
 				},
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/delivery/4",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"delivery",
-						"4"
-					]
-				}
+				"url": "http://localhost:5001/delivery/4"
 			},
 			"response": []
 		},
 		{
-			"name": "New Request",
+			"name": "Mise à jour profil Livreur",
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjo1LCJleHAiOjE3MzU3OTA5NzEsImlhdCI6MTczNTU3NDk3MX0.9chmz6CsAqHjKTq0BOj5Dzf6YYKPkV9iv6pM206R8sI",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
 				},
-				"method": "POST",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\"shop_id\":1,\r\n\"delivery_id\":4,\r\n\"rating_delivery\":4\r\n\r\n\r\n}",
+					"raw": "{\r\n    \"email\": \"issame10@hotmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role_id\":3,\r\n    \"first_name\": \"issame\",\r\n    \"last_name\": \"hassane\",\r\n    \"vehicle\": \"fiat\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:5001/rating",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"rating"
-					]
-				}
+				"url": "http://localhost:5001/5"
+			},
+			"response": []
+		},
+		{
+			"name": "Mise à jour profil Restaurateur",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"issame10@hotmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role_id\":3,\r\n    \"first_name\": \"issame\",\r\n    \"last_name\": \"hassane\",\r\n    \"vehicle\": \"fiat\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5001/5"
+			},
+			"response": []
+		},
+		{
+			"name": "Mise à jour profil Client",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTBAaG90bWFpbC5jb20iLCJyb2xlX2lkIjozLCJ1c2VyX2lkIjoxNCwiZXhwIjoxNzM4ODcxMjIwLCJpYXQiOjE3Mzg2NTUyMjB9.saj0OPy_9aWhsq1JChHK0scMePE0Y_RHkrdnCBn0N5c"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"issame100@hotmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role_id\":2,\r\n    \"id_client\":10,\r\n    \"phone\": \"0752623995\",\r\n    \"address\": \"13 avenue salvador allende\",\r\n    \"city\": \"villeurbanne\",\r\n    \"postal_code\": \"69100\",\r\n    \"firstname\":\"issame\",\r\n    \"lastname\":\"hassane\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5001/23"
+			},
+			"response": []
+		},
+		{
+			"name": "Modification commande",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiaXNzYW1lMTAwQGhvdG1haWwuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MTAsImV4cCI6MTczNzE3MTk1NSwiaWF0IjoxNzM2OTU1OTU1fQ.zZKK2BbQvUCJrqjEGElryDtGeACiGScB8xrjzQ69mpQ"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_client\":1,\r\n    \"id_shop\":1,\r\n    \"id_delivery_user\":1,\r\n    \"total_amount\":13,\r\n    \"status\":\"preparing\",\r\n    \"client_note\":\"Pas de cornichon\",\r\n    \"items\":[\r\n        {\r\n            \"product_id\":1,\r\n            \"quantity\":2\r\n        },\r\n        {\r\n            \"product_id\":3,\r\n            \"quantity\":2\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5001/orders/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Suppression compte",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiY2xpZW50QGV4YW1wbGUuY29tIiwicm9sZV9pZCI6MiwidXNlcl9pZCI6MiwiZXhwIjoxNzM1NDkyMTExLCJpYXQiOjE3MzU0ODg1MTF9.u5I-w_rjkzv0VMxXHYdaLRQnBpQhPkvCxTTlf284CWA"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:5001/43"
 			},
 			"response": []
 		}
