@@ -22,7 +22,7 @@ router.get('/shop/:id',checkTokenValid,getRestaurant)
 
 
 /**Routes pour les commandes*/
-router.get('/orders/all',checkTokenValid,getAllOrder)
+router.get('/orders/all/:id/:roleId',checkTokenValid,getAllOrder)
 router.get('/orders/:id',checkTokenValid,getOrder)
 router.post('/orders',checkTokenValid,createOrder)
 router.put('/orders/:id',checkTokenValid,updateOrder)

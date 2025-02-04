@@ -1,21 +1,40 @@
 import express from 'express';
-import axios from "axios";
+import axios, {AxiosResponse, getAdapter} from "axios";
 
 /**Liste de toutes les commandes*/
 const getAllOrder = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
 
-        const id = request.query.id;
-        const roleId = request.query.roleId;
+        const id = request.params.id;
+        const roleId = request.params.roleId;
+        const statut = request.query.statut;
 
-        const result = await axios({
-            method: 'get',
-            url: `http://localhost:5003/orders/?id=${id}&roleId=${roleId}`,
-            headers: {'api-key': `${process.env.API_KEY}`}
-        });
-
-        /**Renvoyer une réponse de succès*/
-        response.status(200).json(result.data);
+        switch (roleId) {
+            case "1":
+                 const resultRestaurant = await axios({
+                    method: 'get',
+                    url: `http://localhost:5003/orders/all/${id}/${roleId}`,
+                    headers: {'api-key': `${process.env.API_KEY}`}
+                });
+                response.status(200).json(resultRestaurant.data);
+                break;
+            case "2":
+                 const resultClient = await axios({
+                    method: 'get',
+                    url: `http://localhost:5003/orders/all/${id}/${roleId}`,
+                    headers: {'api-key': `${process.env.API_KEY}`}
+                });
+                response.status(200).json(resultClient.data);
+                break;
+            case "3":
+                 const resultDelivery = await axios({
+                    method: 'get',
+                    url: `http://localhost:5003/orders/all/${id}/${roleId}`,
+                    headers: {'api-key': `${process.env.API_KEY}`}
+                });
+                response.status(200).json(resultDelivery.data);
+                break;
+        }
 
     } catch (error) {
         /**Renvoyer une réponse  d'echec*/
@@ -43,7 +62,6 @@ const getOrder = async (request: express.Request, response: express.Response): P
 
 const createOrder = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        const id = request.params.id
 
         const result = await axios({
             method: 'post',

@@ -7,7 +7,6 @@ dotenv.config()
 
 const userCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-
         const result = await axios({
             method: 'post',
             url: `http://localhost:5002/users`,
@@ -21,6 +20,18 @@ const userCreate = async (request: express.Request, response: express.Response):
 
         switch (request.body.role_id) {
             case 1:
+
+                await axios({
+                    method: 'post',
+                    url: `http://localhost:5004/user`,
+                    headers: {'api-key': `${process.env.API_KEY}`},
+                    data: {
+                        id_user: result.data.user_id,
+                        id_shop: request.body.shop_id,
+                        firstname: request.body.firstname,
+                        lastname: request.body.lastname
+                    }
+                });
                 break;
 
             case 2:
@@ -73,7 +84,6 @@ const userCreate = async (request: express.Request, response: express.Response):
 const userUpdate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
         const id = request.params.id
-
         const result = await axios({
             method: 'put',
             url: `http://localhost:5002/users/${id}`,
@@ -87,6 +97,16 @@ const userUpdate = async (request: express.Request, response: express.Response):
 
         switch (request.body.role_id) {
             case 1:
+                await axios({
+                    method: 'put',
+                    url: `http://localhost:5004/user/${id}`,
+                    headers: {'api-key': `${process.env.API_KEY}`},
+                    data: {
+                        firstname: request.body.firstname,
+                        lastname: request.body.lastname,
+                        id_shop:request.body.id_shop,
+                    }
+                });
                 break;
 
             case 2:
@@ -95,11 +115,12 @@ const userUpdate = async (request: express.Request, response: express.Response):
                     url: `http://localhost:5003/clients/${id}`,
                     headers: {'api-key': `${process.env.API_KEY}`},
                     data: {
-                        user_id: id,
                         phone: request.body.phone,
                         address: request.body.address,
                         city: request.body.city,
-                        postal_code: request.body.postal_code
+                        postal_code: request.body.postal_code,
+                        firstname: request.body.firstname,
+                        lastname: request.body.lastname
                     }
                 });
                 break;
@@ -110,7 +131,6 @@ const userUpdate = async (request: express.Request, response: express.Response):
                     url: `http://localhost:5005/update/${id}`,
                     headers: {'api-key': `${process.env.API_KEY}`},
                     data: {
-                        user_id: id,
                         first_name: request.body.first_name,
                         last_name: request.body.last_name,
                         vehicle: request.body.vehicle
@@ -186,6 +206,7 @@ const userConnexion = async (request: express.Request, response: express.Respons
     try {
         const email = request.body.email;
         const password = request.body.password;
+
         if (email && password) {
             const result = await axios({
                 method: 'post',
@@ -205,6 +226,11 @@ const userConnexion = async (request: express.Request, response: express.Respons
 
             switch (roleId) {
                 case 1:
+                    userInfo = await axios({
+                        method: 'get',
+                        url: `http://localhost:5004/user/${userId}`,
+                        headers: {'api-key': `${process.env.API_KEY}`}
+                    });
                     break
                 case 2:
                     userInfo = await axios({

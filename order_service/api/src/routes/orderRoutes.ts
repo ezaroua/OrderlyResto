@@ -7,16 +7,17 @@ import {
     orderPatch,
     orderDelete 
 } from "../controllers/orderController";
+import {checkApiKey} from "../../middleWares/authMiddleWare";
 const router = express.Router();
 
 /**
  * Routes d'accès aux utilisateurs
  */
-router.get('/orders/:id', orderGetOne);
-router.get('/orders', orderGetAll);
-router.post('/orders', orderCreate);
-router.put('/orders/:id', orderUpdate);
-router.patch('/orders/:id', orderPatch);
-router.delete('/orders/:id', orderDelete);
+router.get('/orders/:id',checkApiKey, orderGetOne);
+router.get('/orders/all/:id/:roleid',checkApiKey, orderGetAll);
+router.post('/orders',checkApiKey, orderCreate);
+router.put('/orders/:id',checkApiKey, orderUpdate);
+router.patch('/orders/:id',checkApiKey, orderPatch);
+router.delete('/orders/:id',checkApiKey, orderDelete);
 
 export default router;

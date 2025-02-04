@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import productRouter from "./src/routes/productRoutes";
 import shopRouter from "./src/routes/shopRoutes";
+import joinshopuserRoutes from "./src/routes/joinshopuserRoutes";
 const app = express();
 const portHost = config.HOST;
 
@@ -11,6 +12,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(productRouter);
 app.use(shopRouter);
+app.use(joinshopuserRoutes)
 
 app.post('/', (request: express.Request, response: express.Response) => {
   response.send(request.body);
