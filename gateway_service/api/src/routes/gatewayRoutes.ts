@@ -28,6 +28,7 @@ router.post('/orders',checkTokenValid,createOrder)
 router.put('/orders/:id',checkTokenValid,updateOrder)
 router.post('/rating',checkTokenValid,ratingOrder)
 
+/** TODO Ajouter la recuperation des commandes par statut pour pour faciliter la gestion par les livreurs et les restaurants
 
 /**Routes pour les livreurs*/
 router.get('/delivery/:id',checkTokenValid,getDelivery)

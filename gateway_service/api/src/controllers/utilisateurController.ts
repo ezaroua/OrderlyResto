@@ -7,7 +7,6 @@ dotenv.config()
 
 const userCreate = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-
         const result = await axios({
             method: 'post',
             url: `http://localhost:5002/users`,
@@ -186,6 +185,7 @@ const userConnexion = async (request: express.Request, response: express.Respons
     try {
         const email = request.body.email;
         const password = request.body.password;
+        console.log("user")
         if (email && password) {
             const result = await axios({
                 method: 'post',
